@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-mist: #E8EEF4;
-  --color-navy: #253447;
-  --color-steel: #4F7A96;
-  --color-tan: #C0A265;
-  --color-background: #E8EEF4;
-  --color-foreground: #253447;
+  --color-mist: #fff8ec;
+  --color-navy: #546b41;
+  --color-steel: #99ad7a;
+  --color-tan: #dcccac;
+  --color-background: #fff8ec;
+  --color-foreground: #546b41;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

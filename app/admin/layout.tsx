@@ -12,7 +12,7 @@ export default async function AdminLayout({
   if (!session) redirect("/login")
 
   return (
-    <div className="min-h-screen bg-[#1a2636] text-white">
+    <div className="min-h-screen bg-[#3a4d2a] text-white">
       <nav className="border-b border-white/10 bg-navy">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-6">
