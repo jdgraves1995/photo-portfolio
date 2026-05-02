@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic"
 
 import { db } from "@/lib/db"
 import Link from "next/link"
-import Image from "next/image"
+import DeleteablePhotoGrid from "@/components/admin/DeleteablePhotoGrid"
 
 export default async function AdminPage() {
   const [photoCount, albumCount, recentPhotos] = await Promise.all([
@@ -50,19 +50,7 @@ export default async function AdminPage() {
       {recentPhotos.length > 0 && (
         <div>
           <h2 className="text-lg font-semibold mb-3">Recent Uploads</h2>
-          <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-2">
-            {recentPhotos.map((photo) => (
-              <div key={photo.id} className="aspect-square rounded-lg overflow-hidden bg-white/5">
-                <Image
-                  src={photo.storageUrl}
-                  alt={photo.title ?? ""}
-                  width={120}
-                  height={120}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ))}
-          </div>
+          <DeleteablePhotoGrid photos={recentPhotos} />
         </div>
       )}
     </div>
