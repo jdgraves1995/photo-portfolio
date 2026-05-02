@@ -1,7 +1,9 @@
 export const dynamic = "force-dynamic"
 
 import { db } from "@/lib/db"
+import { auth } from "@/lib/auth"
 import Navbar from "@/components/Navbar"
+import DeletePhotoButton from "@/components/admin/DeletePhotoButton"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
@@ -33,10 +35,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PhotoPage({ params }: Props) {
   const { id } = await params
-  const photo = await db.photo.findUnique({
-    where: { id },
-    include: { album: true },
-  })
+  const [photo, session] = await Promise.all([
+    db.photo.findUnique({ where: { id }, include: { album: true } }),
+    auth(),
+  ])
 
   if (!photo) notFound()
 
@@ -57,7 +59,7 @@ export default async function PhotoPage({ params }: Props) {
             alt={photo.title ?? ""}
             width={photo.width ?? 1200}
             height={photo.height ?? 800}
-            unoptimized
+            quality={100}
             className="w-full h-auto"
             priority
             sizes="(max-width: 1280px) 100vw, 1280px"
@@ -80,6 +82,12 @@ export default async function PhotoPage({ params }: Props) {
             {photo.description && (
               <p className="text-navy/60 leading-relaxed pt-2 italic">{photo.description}</p>
             )}
+          </div>
+        )}
+
+        {session && (
+          <div className="mt-6 flex justify-center">
+            <DeletePhotoButton photoId={photo.id} />
           </div>
         )}
       </main>

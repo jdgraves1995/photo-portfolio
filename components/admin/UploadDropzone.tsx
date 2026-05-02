@@ -122,7 +122,7 @@ export default function UploadDropzone({ albums }: { albums: Album[] }) {
           {isDragActive ? "Drop files here" : "Drag & drop photos here, or click to browse"}
         </p>
         <p className="text-white/30 text-sm mt-2">
-          JPEG · PNG · WebP · RAW: CR2, NEF, ARW, DNG · No file size limit
+          JPEG · PNG · WebP — export from Lightroom or Photos before uploading
         </p>
       </div>
 
