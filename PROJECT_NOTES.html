@@ -46,7 +46,7 @@
 <div class="container">
 
   <h1>Photography Portfolio</h1>
-  <p class="subtitle">Project notes — built April 29–30, 2026 &nbsp;·&nbsp; <a class="url" href="https://photo-portfolio-three-amber.vercel.app" target="_blank">photo-portfolio-three-amber.vercel.app</a></p>
+  <p class="subtitle">Project notes — built April 29 – May 2, 2026 &nbsp;·&nbsp; <a class="url" href="https://photo-portfolio-three-amber.vercel.app" target="_blank">photo-portfolio-three-amber.vercel.app</a></p>
 
   <div class="toc">
     <h3>Contents</h3>
@@ -90,8 +90,8 @@
       <span class="badge green">Free</span><span class="badge blue">Database</span>
     </div>
     <div class="card">
-      <h3>Cloudinary</h3>
-      <p>Image storage and CDN. Delivers images with <code>f_auto,q_auto:best</code> — serves WebP to modern browsers at the highest quality preset. Free tier: 25GB storage.</p>
+      <h3>Cloudflare R2</h3>
+      <p>Object storage for original photo files. 10GB free, no egress fees, no per-file size limit. Files are uploaded directly from the browser via presigned PUT URLs (bypasses Vercel's body size limit). Replaces Cloudinary which had a 10MB file cap.</p>
       <span class="badge green">Free</span><span class="badge blue">Storage</span>
     </div>
     <div class="card">
@@ -106,7 +106,7 @@
     </div>
     <div class="card">
       <h3>react-dropzone</h3>
-      <p>Client-side drag-and-drop file upload UI. Files are uploaded directly from the browser to Cloudinary (bypassing Vercel's 4.5MB body size limit).</p>
+      <p>Client-side drag-and-drop file upload UI. Files are uploaded directly from the browser to R2 via a presigned URL (bypassing Vercel's 4.5MB body size limit). Accepts JPEG, PNG, and WebP — RAW formats (DNG, CR2, etc.) are not supported for web display.</p>
       <span class="badge blue">UI</span>
     </div>
   </div>
@@ -115,49 +115,53 @@
   <h2 id="structure">3. Project Structure</h2>
   <pre><code>photo-portfolio/
 ├── app/
-│   ├── page.tsx                        ← Public gallery grid (/)
+│   ├── page.tsx                        ← Public gallery — fullscreen slideshow (/)
 │   ├── layout.tsx                      ← Root layout (fonts, metadata)
 │   ├── globals.css                     ← Tailwind v4 import + base styles
+│   ├── actions.ts                      ← Server actions (e.g. updateHeroCaption)
 │   ├── login/
 │   │   └── page.tsx                    ← Custom admin login page (/login)
 │   ├── albums/
 │   │   ├── page.tsx                    ← Albums list (/albums)
 │   │   └── [slug]/page.tsx             ← Album detail (/albums/:slug)
 │   ├── photos/
-│   │   └── [id]/page.tsx               ← Photo detail + OG tags (/photos/:id)
+│   │   └── [id]/page.tsx               ← Photo detail + OG tags + admin delete (/photos/:id)
 │   ├── admin/
 │   │   ├── layout.tsx                  ← Auth guard (redirects to /login if not signed in)
-│   │   ├── page.tsx                    ← Admin dashboard (/admin)
+│   │   ├── page.tsx                    ← Admin dashboard with click-to-delete grid (/admin)
 │   │   ├── upload/page.tsx             ← Upload panel (/admin/upload)
 │   │   └── albums/page.tsx             ← Album management (/admin/albums)
 │   └── api/
 │       ├── auth/[...nextauth]/route.ts ← NextAuth catch-all handler
 │       ├── upload/
-│       │   ├── sign/route.ts           ← Returns signed Cloudinary upload params
+│       │   ├── sign/route.ts           ← Returns R2 presigned PUT URL
 │       │   └── complete/route.ts       ← Saves photo metadata to DB after upload
 │       ├── photos/
-│       │   ├── route.ts                ← GET all photos (paginated)
-│       │   └── [id]/route.ts           ← PATCH / DELETE a photo
+│       │   └── [id]/route.ts           ← PATCH (edit) / DELETE (removes from R2 + DB)
 │       └── albums/
 │           ├── route.ts                ← GET all / POST new album
 │           └── [slug]/route.ts         ← GET / PATCH / DELETE an album
 ├── components/
 │   ├── Navbar.tsx                      ← Public nav (Gallery, Albums links)
-│   ├── PhotoCard.tsx                   ← Masonry grid card with hover title
+│   ├── PhotoSlideshow.tsx              ← Fullscreen scroll/swipe slideshow (main gallery)
+│   ├── PhotoCard.tsx                   ← Grid card with hover title
 │   ├── AlbumCard.tsx                   ← Album grid card with cover photo
+│   ├── HeroCaptionEditor.tsx           ← Editable hero caption (admin only)
 │   └── admin/
-│       ├── UploadDropzone.tsx          ← Chunked upload UI with progress bar
+│       ├── UploadDropzone.tsx          ← Direct-to-R2 upload UI with progress
+│       ├── DeleteablePhotoGrid.tsx     ← Dashboard photo grid with click-to-delete
+│       ├── DeletePhotoButton.tsx       ← Two-step confirm delete (photo detail page)
 │       ├── AlbumForm.tsx               ← Create / edit album form
 │       └── SignOutButton.tsx           ← Client component for sign-out
 ├── lib/
 │   ├── db.ts                           ← Prisma client singleton (uses PrismaPg adapter)
 │   ├── auth.ts                         ← NextAuth config (GitHub provider + PrismaAdapter)
-│   └── cloudinary.ts                   ← URL builder helpers (thumbUrl, fullUrl, ogImageUrl)
+│   └── r2.ts                           ← Cloudflare R2 S3 client + bucket/URL exports
 ├── prisma/
 │   └── schema.prisma                   ← Database schema (Album, Photo, Tag, NextAuth tables)
 ├── prisma.config.ts                    ← Prisma CLI config (uses DIRECT_URL for migrations)
 ├── app/generated/prisma/               ← Generated Prisma client (auto-generated, not in git)
-├── next.config.ts                      ← Adds res.cloudinary.com to image remote patterns
+├── next.config.ts                      ← Whitelists R2 public hostname for Next.js Image
 ├── package.json                        ← Has postinstall: prisma generate (required for Vercel)
 └── .env                                ← Local secrets (never committed to git)</code></pre>
 
@@ -194,22 +198,35 @@
   <h3>Upload Flow</h3>
   <div class="card">
     <ol>
-      <li>Admin drops files on the dropzone in <code>/admin/upload</code></li>
-      <li>Browser calls <code>POST /api/upload/sign</code> — server generates a Cloudinary signed upload URL (keeps API secret server-side)</li>
-      <li>Browser uploads the file <strong>directly to Cloudinary</strong> in 8MB chunks using <code>X-Unique-Upload-Id</code> and <code>Content-Range</code> headers (bypasses Vercel's 4.5MB body limit)</li>
-      <li>After upload, browser calls <code>POST /api/upload/complete</code> with the Cloudinary result — saves photo metadata (public_id, url, width, height) to Supabase</li>
+      <li>Admin drops JPEG/PNG/WebP files on the dropzone in <code>/admin/upload</code></li>
+      <li>Browser calls <code>POST /api/upload/sign</code> — server generates an R2 presigned PUT URL (keeps credentials server-side)</li>
+      <li>Browser uploads the file <strong>directly to Cloudflare R2</strong> via the presigned URL with XHR (tracks progress, bypasses Vercel's body size limit)</li>
+      <li>Browser reads the image dimensions client-side via a DOM <code>img</code> element</li>
+      <li>Browser calls <code>POST /api/upload/complete</code> — saves photo metadata (storageKey, storageUrl, width, height) to Supabase</li>
     </ol>
+    <p style="margin-top:10px;"><strong>Important:</strong> Only upload JPEG/PNG/WebP. RAW formats like DNG cannot be displayed by browsers and cannot be properly decoded by Vercel's image optimizer. Export from Lightroom at quality 90–95, sRGB before uploading.</p>
   </div>
 
   <h3>Image Delivery</h3>
   <div class="card">
-    <p>Images are never served from our server. Cloudinary CDN handles everything via transformation URLs:</p>
+    <p>Original files are stored in Cloudflare R2. All images are served through <strong>Vercel's Image Optimization API</strong> at <code>quality={100}</code>, which converts the source file to WebP and serves it via CDN.</p>
     <ul>
-      <li><strong>Thumbnails:</strong> <code>f_auto,q_auto,w_600,h_400,c_fill,g_auto</code></li>
-      <li><strong>Full view:</strong> <code>f_auto,q_auto:best,w_3000,c_limit</code></li>
-      <li><strong>OG/Social:</strong> <code>f_jpg,q_auto:good,w_1200,h_630,c_fill,g_auto</code></li>
+      <li><strong>Slideshow &amp; detail page:</strong> <code>quality={100}</code> — Vercel fetches from R2 server-side, converts to WebP, caches on CDN</li>
+      <li><strong>Grid cards:</strong> Default Next.js image optimization</li>
     </ul>
-    <p><code>f_auto</code> delivers WebP to modern browsers. <code>q_auto:best</code> is Cloudinary's highest quality preset.</p>
+    <p><strong>Do not use <code>unoptimized</code></strong> on image components — it bypasses Vercel and loads directly from R2, which fails for any non-JPEG format the browser can't natively render.</p>
+  </div>
+
+  <h3>Delete Photo</h3>
+  <div class="card">
+    <p><code>DELETE /api/photos/[id]</code> handles full cleanup in order:</p>
+    <ol>
+      <li>Clears any album that uses this photo as its cover (<code>coverPhotoId → null</code>)</li>
+      <li>Clears SiteSettings if this photo is the hero (<code>heroPhotoId → null</code>)</li>
+      <li>Deletes the database record</li>
+      <li>Deletes the file from Cloudflare R2</li>
+    </ol>
+    <p style="margin-top:10px;">Accessible from two places: the photo detail page (admin-only "Delete photo" button with two-step confirm) and the admin dashboard (click any thumbnail to show a confirm overlay).</p>
   </div>
 
   <h3>Social Sharing (Open Graph)</h3>
@@ -226,20 +243,21 @@
   <h2 id="env">6. Environment Variables</h2>
   <div class="card">
     <pre><code># Supabase — two URLs needed in Prisma 7:
-DATABASE_URL=   # Pooler URL (port 6543, ?pgbouncer=true) — used by the app at runtime
-DIRECT_URL=     # Session pooler (port 5432) — used by prisma db push / migrations
+DATABASE_URL=   # Pooler URL (port 6543) — used by the app at runtime
+DIRECT_URL=     # Direct connection (port 5432) — used by prisma db push / migrations
 
-# Cloudinary
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=   # Used client-side for URL building (NEXT_PUBLIC_ prefix required)
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
+# Cloudflare R2
+R2_ACCOUNT_ID=
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=
+R2_BUCKET_NAME=         # e.g. photo-portfolio
+R2_PUBLIC_URL=          # e.g. https://pub-HASH.r2.dev — must match next.config.ts remotePatterns
 
 # NextAuth v5 — note: AUTH_* prefix, not NEXTAUTH_* (that was v4)
-AUTH_SECRET=     # Random 32-byte base64 string
+AUTH_SECRET=            # Random 32-byte base64 string
 AUTH_GITHUB_ID=
 AUTH_GITHUB_SECRET=
-AUTH_URL=        # Full site URL — e.g. https://photo-portfolio-three-amber.vercel.app
-                 # On Vercel: set this. Locally: use NEXTAUTH_URL=http://localhost:3000</code></pre>
+NEXTAUTH_URL=           # Full site URL — e.g. https://photo-portfolio-three-amber.vercel.app</code></pre>
   </div>
 
   <!-- ISSUES -->
@@ -300,11 +318,27 @@ AUTH_URL=        # Full site URL — e.g. https://photo-portfolio-three-amber.ve
   </div>
 
   <div class="issue">
-    <h3>Cloudinary — file size too large</h3>
+    <h3>Cloudinary — file size too large / replaced with R2</h3>
     <div class="error">File size too large. Got 49253646. Maximum is 10485760.</div>
-    <p>Cloudinary's free tier has a 10MB per-file limit. RAW camera files are 20–50MB. The limit applies to the total file size even when uploading in chunks.</p>
+    <p>Cloudinary's free tier rejects files over 10MB. RAW camera files are 20–50MB.</p>
     <div class="fix">
-      <p><strong>Partial fix:</strong> Implemented chunked upload (8MB chunks with <code>X-Unique-Upload-Id</code> + <code>Content-Range</code> headers) but the total file size check still applies on the free tier. <strong>Full fix pending:</strong> Switching storage to Cloudflare R2 (10GB free, no file size limit).</p>
+      <p><strong>Fix:</strong> Replaced Cloudinary entirely with <strong>Cloudflare R2</strong>. Upload flow changed to a presigned PUT URL (browser → R2 directly). No per-file size limit. Removed all Cloudinary dependencies and URL helpers. Updated <code>next.config.ts</code> to whitelist the R2 public hostname.</p>
+    </div>
+  </div>
+
+  <div class="issue">
+    <h3>Images blurry/pixelated in gallery — DNG RAW format</h3>
+    <p>After switching to R2, images in the gallery appeared blurry and pixelated. The root cause: photos were uploaded as <strong>.dng (RAW camera files)</strong>. Browsers cannot render DNG natively. Vercel's Image Optimizer (Sharp) treats DNG as TIFF and reads partial data — either a low-res embedded thumbnail or raw Bayer pattern data — producing a blurry/pixelated result.</p>
+    <div class="fix">
+      <p><strong>Fix:</strong> RAW formats are fundamentally not web-displayable. The correct workflow is to export from Lightroom/Photos as JPEG (quality 90–95, sRGB) before uploading. Updated the upload dropzone hint to make this clear. Deleted DNG files from R2 and re-uploaded as JPEG exports.</p>
+    </div>
+  </div>
+
+  <div class="issue">
+    <h3>Photo detail page blank — unoptimized + non-JPEG format</h3>
+    <p>The photo detail page (<code>/photos/[id]</code>) showed nothing — just the filename. The image component had <code>unoptimized</code> set, which bypasses Vercel's optimizer and loads the R2 URL directly in the browser. Browsers cannot render DNG files, so the image area was empty.</p>
+    <div class="fix">
+      <p><strong>Fix:</strong> Changed <code>unoptimized</code> to <code>quality={100}</code> on the detail page. This routes through Vercel's Image Optimizer, which fetches from R2 server-side and converts to WebP before serving. <strong>Rule:</strong> never use <code>unoptimized</code> — always use the Vercel optimizer so format conversion is handled server-side.</p>
     </div>
   </div>
 
@@ -331,13 +365,18 @@ AUTH_URL=        # Full site URL — e.g. https://photo-portfolio-three-amber.ve
   <!-- TODO -->
   <h2 id="todo">8. Left To Do</h2>
   <div class="card">
-    <h3>RAW File Storage (Cloudflare R2)</h3>
-    <p>Cloudinary's free tier rejects files over 10MB. Plan is to replace Cloudinary with <strong>Cloudflare R2</strong> for storage — 10GB free, no per-file size limit, no egress fees. Would require replacing the signed upload flow and Cloudinary URL helpers with R2 presigned PUT URLs and direct R2 public URLs.</p>
-    <span class="badge yellow">Pending</span>
+    <h3>Cloudflare R2 Storage Migration</h3>
+    <p>Replaced Cloudinary with Cloudflare R2. Direct browser-to-R2 upload via presigned PUT URLs. No file size limit.</p>
+    <span class="badge green">Done — May 1, 2026</span>
+  </div>
+  <div class="card">
+    <h3>Delete Photos</h3>
+    <p>Admins can delete photos from the dashboard (click thumbnail → confirm overlay) or from the photo detail page (two-step confirm button). Deletion removes the file from R2 and the DB record, and clears any album cover or hero photo references.</p>
+    <span class="badge green">Done — May 2, 2026</span>
   </div>
   <div class="card">
     <h3>Photo Editing in Admin</h3>
-    <p>Ability to edit a photo's title, description, and album assignment after upload.</p>
+    <p>Ability to edit a photo's title, description, and album assignment after upload. API route (<code>PATCH /api/photos/[id]</code>) already exists — just needs a UI.</p>
     <span class="badge yellow">Pending</span>
   </div>
   <div class="card">
@@ -351,7 +390,7 @@ AUTH_URL=        # Full site URL — e.g. https://photo-portfolio-three-amber.ve
     <span class="badge yellow">Pending</span>
   </div>
 
-  <p style="margin-top: 48px; color: #3f3f46; font-size: 0.8rem; text-align: center;">Generated April 30, 2026</p>
+  <p style="margin-top: 48px; color: #3f3f46; font-size: 0.8rem; text-align: center;">Updated May 2, 2026</p>
 
 </div>
 </body>
