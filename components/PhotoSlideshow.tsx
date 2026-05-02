@@ -31,7 +31,7 @@ export default function PhotoSlideshow({ photos, heroCaption, isAdmin }: Props) 
       if (next < 0 || next >= photos.length) return
       setLocked(true)
       setCurrent(next)
-      setTimeout(() => setLocked(false), 550)
+      setTimeout(() => setLocked(false), 950)
     },
     [current, locked, photos.length]
   )
@@ -41,7 +41,7 @@ export default function PhotoSlideshow({ photos, heroCaption, isAdmin }: Props) 
       if (locked || index === current) return
       setLocked(true)
       setCurrent(index)
-      setTimeout(() => setLocked(false), 550)
+      setTimeout(() => setLocked(false), 950)
     },
     [current, locked]
   )
@@ -52,8 +52,8 @@ export default function PhotoSlideshow({ photos, heroCaption, isAdmin }: Props) 
     const onWheel = (e: WheelEvent) => {
       e.preventDefault()
       const now = Date.now()
-      if (now - lastFired < 600) return
-      if (Math.abs(e.deltaY) < 20) return
+      if (now - lastFired < 1000) return
+      if (Math.abs(e.deltaY) < 30) return
       lastFired = now
       go(e.deltaY > 0 ? 1 : -1)
     }
@@ -93,7 +93,7 @@ export default function PhotoSlideshow({ photos, heroCaption, isAdmin }: Props) 
       {photos.map((photo, i) => (
         <div
           key={photo.id}
-          className="absolute inset-0 flex flex-col transition-transform duration-500 ease-in-out"
+          className="absolute inset-0 flex flex-col transition-transform duration-[900ms] ease-in-out"
           style={{ transform: `translateY(${(i - current) * 100}%)` }}
         >
           {/* Image area */}
