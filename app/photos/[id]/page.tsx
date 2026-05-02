@@ -57,7 +57,7 @@ export default async function PhotoPage({ params }: Props) {
             alt={photo.title ?? ""}
             width={photo.width ?? 1200}
             height={photo.height ?? 800}
-            quality={95}
+            unoptimized
             className="w-full h-auto"
             priority
             sizes="(max-width: 1280px) 100vw, 1280px"
