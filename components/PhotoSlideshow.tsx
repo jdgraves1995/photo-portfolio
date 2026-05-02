@@ -102,7 +102,7 @@ export default function PhotoSlideshow({ photos, heroCaption, isAdmin }: Props) 
                 src={photo.storageUrl}
                 alt={photo.title ?? ""}
                 fill
-                unoptimized
+                quality={100}
                 className="object-contain p-6 lg:p-12"
                 priority={i === 0}
                 sizes="100vw"
