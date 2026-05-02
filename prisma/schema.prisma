@@ -50,6 +50,12 @@ model PhotoTag {
   @@id([photoId, tagId])
 }
 
+model SiteSettings {
+  id          String  @id @default("default")
+  heroPhotoId String?
+  heroCaption String?
+}
+
 // NextAuth.js required tables
 model Account {
   id                String  @id @default(cuid())

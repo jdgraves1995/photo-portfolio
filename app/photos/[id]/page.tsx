@@ -42,17 +42,17 @@ export default async function PhotoPage({ params }: Props) {
   if (!photo) notFound()
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-mist text-navy">
       <Navbar />
-      <main className="max-w-5xl mx-auto px-4 py-8">
+      <main className="max-w-5xl mx-auto px-6 py-10">
         <Link
           href={photo.album ? `/albums/${photo.album.slug}` : "/"}
-          className="text-zinc-500 hover:text-white text-sm mb-6 inline-block transition-colors"
+          className="text-steel hover:text-navy text-sm mb-6 inline-block transition-colors"
         >
           {photo.album ? `← ${photo.album.title}` : "← Gallery"}
         </Link>
 
-        <div className="rounded-xl overflow-hidden bg-zinc-900">
+        <div className="rounded-2xl overflow-hidden shadow-md bg-white">
           <Image
             src={fullUrl(photo.cloudinaryPublicId)}
             alt={photo.title ?? ""}
@@ -65,20 +65,20 @@ export default async function PhotoPage({ params }: Props) {
         </div>
 
         {(photo.title || photo.description || photo.album) && (
-          <div className="mt-6 space-y-1">
+          <div className="mt-6 text-center space-y-1">
             {photo.title && (
-              <h1 className="text-2xl font-semibold">{photo.title}</h1>
+              <h1 className="text-2xl font-semibold text-navy">{photo.title}</h1>
             )}
             {photo.album && (
               <Link
                 href={`/albums/${photo.album.slug}`}
-                className="text-zinc-400 hover:text-white text-sm transition-colors"
+                className="text-steel hover:text-navy text-sm transition-colors"
               >
                 {photo.album.title}
               </Link>
             )}
             {photo.description && (
-              <p className="text-zinc-300 leading-relaxed pt-2">{photo.description}</p>
+              <p className="text-navy/60 leading-relaxed pt-2 italic">{photo.description}</p>
             )}
           </div>
         )}

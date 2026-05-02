@@ -12,25 +12,22 @@ interface Photo {
 
 export default function PhotoCard({ photo }: { photo: Photo }) {
   return (
-    <Link
-      href={`/photos/${photo.id}`}
-      className="block mb-3 group overflow-hidden rounded-lg"
-    >
-      <div className="relative overflow-hidden rounded-lg bg-zinc-900">
+    <Link href={`/photos/${photo.id}`} className="group block">
+      <div className="overflow-hidden rounded-xl bg-white shadow-sm transition-shadow duration-300 group-hover:shadow-md">
         <Image
           src={thumbUrl(photo.cloudinaryPublicId)}
           alt={photo.title ?? ""}
           width={photo.width ?? 600}
           height={photo.height ?? 400}
-          className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          className="w-full h-auto transition-transform duration-700 group-hover:scale-[1.02]"
+          sizes="(max-width: 768px) 100vw, 720px"
         />
-        {photo.title && (
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
-            <p className="text-white text-sm font-medium truncate">{photo.title}</p>
-          </div>
-        )}
       </div>
+      {photo.title && (
+        <p className="mt-3 text-navy/50 text-sm tracking-wide text-center">
+          {photo.title}
+        </p>
+      )}
     </Link>
   )
 }

@@ -15,19 +15,19 @@ export default function AlbumCard({ album }: { album: Album }) {
   return (
     <Link
       href={`/albums/${album.slug}`}
-      className="group block rounded-xl overflow-hidden bg-zinc-900 hover:ring-1 hover:ring-zinc-600 transition-all"
+      className="group block rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow duration-300"
     >
-      <div className="aspect-[4/3] overflow-hidden bg-zinc-800">
+      <div className="aspect-[4/3] overflow-hidden bg-mist">
         {album.coverPhotoId ? (
           <Image
             src={thumbUrl(album.coverPhotoId)}
             alt={album.title}
             width={600}
             height={400}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-zinc-600">
+          <div className="w-full h-full flex items-center justify-center text-navy/20">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="w-12 h-12"
@@ -46,12 +46,12 @@ export default function AlbumCard({ album }: { album: Album }) {
         )}
       </div>
       <div className="p-4">
-        <h3 className="text-white font-semibold text-lg leading-tight">{album.title}</h3>
+        <h3 className="text-navy font-semibold text-lg leading-tight">{album.title}</h3>
         {album.description && (
-          <p className="text-zinc-400 text-sm mt-1 line-clamp-2">{album.description}</p>
+          <p className="text-navy/50 text-sm mt-1 line-clamp-2">{album.description}</p>
         )}
         {album._count !== undefined && (
-          <p className="text-zinc-500 text-xs mt-2">{album._count.photos} photos</p>
+          <p className="text-steel text-xs mt-2">{album._count.photos} photos</p>
         )}
       </div>
     </Link>

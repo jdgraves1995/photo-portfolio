@@ -16,12 +16,12 @@ export default async function AlbumsPage() {
   })
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-mist text-navy">
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Albums</h1>
+      <main className="max-w-7xl mx-auto px-6 py-10">
+        <h1 className="text-3xl font-semibold mb-8">Albums</h1>
         {albums.length === 0 ? (
-          <p className="text-zinc-500">No albums yet.</p>
+          <p className="text-navy/40">No albums yet.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {albums.map((album) => (

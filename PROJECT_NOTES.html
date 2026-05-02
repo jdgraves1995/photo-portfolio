@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Photo Portfolio — Project Notes</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0a0a0a; color: #e4e4e7; line-height: 1.7; }
+    .container { max-width: 900px; margin: 0 auto; padding: 48px 24px; }
+    h1 { font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .subtitle { color: #71717a; font-size: 0.95rem; margin-bottom: 48px; }
+    h2 { font-size: 1.25rem; font-weight: 600; color: #fff; margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 1px solid #27272a; }
+    h3 { font-size: 1rem; font-weight: 600; color: #a1a1aa; margin: 20px 0 8px; }
+    p { color: #a1a1aa; margin-bottom: 12px; }
+    ul, ol { color: #a1a1aa; padding-left: 20px; margin-bottom: 12px; }
+    li { margin-bottom: 6px; }
+    code { background: #18181b; color: #86efac; font-family: "Fira Code", "Cascadia Code", monospace; font-size: 0.85rem; padding: 2px 6px; border-radius: 4px; border: 1px solid #27272a; }
+    pre { background: #18181b; border: 1px solid #27272a; border-radius: 8px; padding: 16px; overflow-x: auto; margin: 12px 0 20px; }
+    pre code { background: none; border: none; padding: 0; color: #e4e4e7; font-size: 0.85rem; line-height: 1.6; }
+    .card { background: #18181b; border: 1px solid #27272a; border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; }
+    .card h3 { margin-top: 0; color: #fff; font-size: 0.95rem; }
+    .badge { display: inline-block; background: #27272a; color: #a1a1aa; font-size: 0.75rem; padding: 2px 8px; border-radius: 99px; margin-right: 6px; margin-bottom: 4px; }
+    .badge.green { background: #14532d; color: #86efac; }
+    .badge.blue { background: #1e3a5f; color: #93c5fd; }
+    .badge.yellow { background: #422006; color: #fde68a; }
+    .issue { border-left: 3px solid #ef4444; padding-left: 16px; margin-bottom: 24px; }
+    .issue .error { color: #fca5a5; font-size: 0.875rem; font-family: monospace; background: #1c0a0a; padding: 8px 12px; border-radius: 6px; margin: 8px 0; }
+    .fix { border-left: 3px solid #22c55e; padding-left: 16px; margin-top: 10px; }
+    .fix p { color: #86efac; }
+    .url { color: #60a5fa; text-decoration: none; font-size: 0.9rem; }
+    .url:hover { text-decoration: underline; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+    .toc { background: #18181b; border: 1px solid #27272a; border-radius: 10px; padding: 20px 24px; margin-bottom: 40px; }
+    .toc h3 { color: #fff; margin-top: 0; margin-bottom: 12px; }
+    .toc a { color: #60a5fa; text-decoration: none; display: block; padding: 3px 0; font-size: 0.9rem; }
+    .toc a:hover { text-decoration: underline; }
+    .toc ol { margin: 0; }
+    .toc li { margin-bottom: 4px; }
+    .tag { font-size: 0.75rem; color: #71717a; }
+    hr { border: none; border-top: 1px solid #27272a; margin: 40px 0; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Photography Portfolio</h1>
+  <p class="subtitle">Project notes — built April 29–30, 2026 &nbsp;·&nbsp; <a class="url" href="https://photo-portfolio-three-amber.vercel.app" target="_blank">photo-portfolio-three-amber.vercel.app</a></p>
+
+  <div class="toc">
+    <h3>Contents</h3>
+    <ol>
+      <li><a href="#goal">Project Goal</a></li>
+      <li><a href="#stack">Tech Stack &amp; Why</a></li>
+      <li><a href="#structure">Project Structure</a></li>
+      <li><a href="#urls">Key URLs</a></li>
+      <li><a href="#how-it-works">How Key Features Work</a></li>
+      <li><a href="#env">Environment Variables</a></li>
+      <li><a href="#issues">Issues Encountered &amp; How We Fixed Them</a></li>
+      <li><a href="#todo">Left To Do</a></li>
+    </ol>
+  </div>
+
+  <!-- GOAL -->
+  <h2 id="goal">1. Project Goal</h2>
+  <p>A personal photography portfolio where the owner can upload RAW images and share URLs on social media. Visitors see high-quality web-optimized images without JPEG compression artifacts. The entire stack runs on free tiers with no ongoing hosting cost.</p>
+
+  <!-- STACK -->
+  <h2 id="stack">2. Tech Stack &amp; Why</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>Next.js 16 (App Router)</h3>
+      <p>Full-stack React framework. Gives us both the frontend and API routes in one project. Native Vercel integration means zero config deployment.</p>
+      <span class="badge blue">Frontend</span><span class="badge blue">API</span>
+    </div>
+    <div class="card">
+      <h3>Tailwind CSS v4</h3>
+      <p>Utility-first CSS. Configured via <code>@import "tailwindcss"</code> in globals.css (new Tailwind v4 syntax — no config file needed).</p>
+      <span class="badge blue">Styling</span>
+    </div>
+    <div class="card">
+      <h3>Prisma 7 + @prisma/adapter-pg</h3>
+      <p>Type-safe ORM. Prisma 7 is a breaking change from v6 — it no longer accepts a <code>url</code> in <code>schema.prisma</code> and requires a database adapter at runtime.</p>
+      <span class="badge blue">ORM</span>
+    </div>
+    <div class="card">
+      <h3>Supabase (PostgreSQL)</h3>
+      <p>Free hosted PostgreSQL. 500MB free tier, plenty for photo metadata. The direct connection URL is used for migrations; the pooler URL (port 6543) is used at runtime.</p>
+      <span class="badge green">Free</span><span class="badge blue">Database</span>
+    </div>
+    <div class="card">
+      <h3>Cloudinary</h3>
+      <p>Image storage and CDN. Delivers images with <code>f_auto,q_auto:best</code> — serves WebP to modern browsers at the highest quality preset. Free tier: 25GB storage.</p>
+      <span class="badge green">Free</span><span class="badge blue">Storage</span>
+    </div>
+    <div class="card">
+      <h3>NextAuth v5 (Auth.js beta)</h3>
+      <p>Authentication. Protects admin routes. Uses GitHub OAuth. v5 is a major API change from v4 — env var is <code>AUTH_SECRET</code> not <code>NEXTAUTH_SECRET</code>, and URL is <code>AUTH_URL</code> not <code>NEXTAUTH_URL</code>.</p>
+      <span class="badge green">Free</span><span class="badge blue">Auth</span>
+    </div>
+    <div class="card">
+      <h3>Vercel</h3>
+      <p>Hosting. Free hobby tier covers personal traffic easily. Automatic deploys from GitHub on every push. All pages are <code>force-dynamic</code> (server-rendered on demand).</p>
+      <span class="badge green">Free</span><span class="badge blue">Hosting</span>
+    </div>
+    <div class="card">
+      <h3>react-dropzone</h3>
+      <p>Client-side drag-and-drop file upload UI. Files are uploaded directly from the browser to Cloudinary (bypassing Vercel's 4.5MB body size limit).</p>
+      <span class="badge blue">UI</span>
+    </div>
+  </div>
+
+  <!-- STRUCTURE -->
+  <h2 id="structure">3. Project Structure</h2>
+  <pre><code>photo-portfolio/
+├── app/
+│   ├── page.tsx                        ← Public gallery grid (/)
+│   ├── layout.tsx                      ← Root layout (fonts, metadata)
+│   ├── globals.css                     ← Tailwind v4 import + base styles
+│   ├── login/
+│   │   └── page.tsx                    ← Custom admin login page (/login)
+│   ├── albums/
+│   │   ├── page.tsx                    ← Albums list (/albums)
+│   │   └── [slug]/page.tsx             ← Album detail (/albums/:slug)
+│   ├── photos/
+│   │   └── [id]/page.tsx               ← Photo detail + OG tags (/photos/:id)
+│   ├── admin/
+│   │   ├── layout.tsx                  ← Auth guard (redirects to /login if not signed in)
+│   │   ├── page.tsx                    ← Admin dashboard (/admin)
+│   │   ├── upload/page.tsx             ← Upload panel (/admin/upload)
+│   │   └── albums/page.tsx             ← Album management (/admin/albums)
+│   └── api/
+│       ├── auth/[...nextauth]/route.ts ← NextAuth catch-all handler
+│       ├── upload/
+│       │   ├── sign/route.ts           ← Returns signed Cloudinary upload params
+│       │   └── complete/route.ts       ← Saves photo metadata to DB after upload
+│       ├── photos/
+│       │   ├── route.ts                ← GET all photos (paginated)
+│       │   └── [id]/route.ts           ← PATCH / DELETE a photo
+│       └── albums/
+│           ├── route.ts                ← GET all / POST new album
+│           └── [slug]/route.ts         ← GET / PATCH / DELETE an album
+├── components/
+│   ├── Navbar.tsx                      ← Public nav (Gallery, Albums links)
+│   ├── PhotoCard.tsx                   ← Masonry grid card with hover title
+│   ├── AlbumCard.tsx                   ← Album grid card with cover photo
+│   └── admin/
+│       ├── UploadDropzone.tsx          ← Chunked upload UI with progress bar
+│       ├── AlbumForm.tsx               ← Create / edit album form
+│       └── SignOutButton.tsx           ← Client component for sign-out
+├── lib/
+│   ├── db.ts                           ← Prisma client singleton (uses PrismaPg adapter)
+│   ├── auth.ts                         ← NextAuth config (GitHub provider + PrismaAdapter)
+│   └── cloudinary.ts                   ← URL builder helpers (thumbUrl, fullUrl, ogImageUrl)
+├── prisma/
+│   └── schema.prisma                   ← Database schema (Album, Photo, Tag, NextAuth tables)
+├── prisma.config.ts                    ← Prisma CLI config (uses DIRECT_URL for migrations)
+├── app/generated/prisma/               ← Generated Prisma client (auto-generated, not in git)
+├── next.config.ts                      ← Adds res.cloudinary.com to image remote patterns
+├── package.json                        ← Has postinstall: prisma generate (required for Vercel)
+└── .env                                ← Local secrets (never committed to git)</code></pre>
+
+  <!-- URLS -->
+  <h2 id="urls">4. Key URLs</h2>
+  <div class="card">
+    <table style="width:100%; border-collapse: collapse;">
+      <tr style="border-bottom: 1px solid #27272a;">
+        <td style="padding: 8px 0; color: #fff; font-weight: 600; width: 200px;">Gallery</td>
+        <td><a class="url" href="https://photo-portfolio-three-amber.vercel.app" target="_blank">photo-portfolio-three-amber.vercel.app</a></td>
+      </tr>
+      <tr style="border-bottom: 1px solid #27272a;">
+        <td style="padding: 8px 0; color: #fff; font-weight: 600;">Albums</td>
+        <td><a class="url" href="https://photo-portfolio-three-amber.vercel.app/albums" target="_blank">/albums</a></td>
+      </tr>
+      <tr style="border-bottom: 1px solid #27272a;">
+        <td style="padding: 8px 0; color: #fff; font-weight: 600;">Admin Login</td>
+        <td><a class="url" href="https://photo-portfolio-three-amber.vercel.app/login" target="_blank">/login</a></td>
+      </tr>
+      <tr style="border-bottom: 1px solid #27272a;">
+        <td style="padding: 8px 0; color: #fff; font-weight: 600;">Upload Photos</td>
+        <td><a class="url" href="https://photo-portfolio-three-amber.vercel.app/admin/upload" target="_blank">/admin/upload</a></td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; color: #fff; font-weight: 600;">Manage Albums</td>
+        <td><a class="url" href="https://photo-portfolio-three-amber.vercel.app/admin/albums" target="_blank">/admin/albums</a></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <h2 id="how-it-works">5. How Key Features Work</h2>
+
+  <h3>Upload Flow</h3>
+  <div class="card">
+    <ol>
+      <li>Admin drops files on the dropzone in <code>/admin/upload</code></li>
+      <li>Browser calls <code>POST /api/upload/sign</code> — server generates a Cloudinary signed upload URL (keeps API secret server-side)</li>
+      <li>Browser uploads the file <strong>directly to Cloudinary</strong> in 8MB chunks using <code>X-Unique-Upload-Id</code> and <code>Content-Range</code> headers (bypasses Vercel's 4.5MB body limit)</li>
+      <li>After upload, browser calls <code>POST /api/upload/complete</code> with the Cloudinary result — saves photo metadata (public_id, url, width, height) to Supabase</li>
+    </ol>
+  </div>
+
+  <h3>Image Delivery</h3>
+  <div class="card">
+    <p>Images are never served from our server. Cloudinary CDN handles everything via transformation URLs:</p>
+    <ul>
+      <li><strong>Thumbnails:</strong> <code>f_auto,q_auto,w_600,h_400,c_fill,g_auto</code></li>
+      <li><strong>Full view:</strong> <code>f_auto,q_auto:best,w_3000,c_limit</code></li>
+      <li><strong>OG/Social:</strong> <code>f_jpg,q_auto:good,w_1200,h_630,c_fill,g_auto</code></li>
+    </ul>
+    <p><code>f_auto</code> delivers WebP to modern browsers. <code>q_auto:best</code> is Cloudinary's highest quality preset.</p>
+  </div>
+
+  <h3>Social Sharing (Open Graph)</h3>
+  <div class="card">
+    <p>Each photo detail page (<code>/photos/[id]</code>) exports <code>generateMetadata()</code> which sets <code>og:image</code> to a 1200×630 Cloudinary-cropped version of the photo. When you share the URL on social media, the platform fetches these tags and shows a rich preview.</p>
+  </div>
+
+  <h3>Admin Auth Guard</h3>
+  <div class="card">
+    <p><code>app/admin/layout.tsx</code> is a server component that calls <code>auth()</code> from NextAuth on every request. If there's no session, it redirects to <code>/login</code>. No client-side logic needed.</p>
+  </div>
+
+  <!-- ENV VARS -->
+  <h2 id="env">6. Environment Variables</h2>
+  <div class="card">
+    <pre><code># Supabase — two URLs needed in Prisma 7:
+DATABASE_URL=   # Pooler URL (port 6543, ?pgbouncer=true) — used by the app at runtime
+DIRECT_URL=     # Session pooler (port 5432) — used by prisma db push / migrations
+
+# Cloudinary
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=   # Used client-side for URL building (NEXT_PUBLIC_ prefix required)
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+
+# NextAuth v5 — note: AUTH_* prefix, not NEXTAUTH_* (that was v4)
+AUTH_SECRET=     # Random 32-byte base64 string
+AUTH_GITHUB_ID=
+AUTH_GITHUB_SECRET=
+AUTH_URL=        # Full site URL — e.g. https://photo-portfolio-three-amber.vercel.app
+                 # On Vercel: set this. Locally: use NEXTAUTH_URL=http://localhost:3000</code></pre>
+  </div>
+
+  <!-- ISSUES -->
+  <h2 id="issues">7. Issues Encountered &amp; How We Fixed Them</h2>
+
+  <div class="issue">
+    <h3>Node.js not in PowerShell PATH</h3>
+    <div class="error">node : The term 'node' is not recognized as the name of a cmdlet...</div>
+    <p>Node was installed at <code>C:\Program Files\nodejs\</code> but the tool's PowerShell session didn't have it in PATH.</p>
+    <div class="fix">
+      <p><strong>Fix:</strong> Prefix every Node/npm command with <code>$env:PATH = "C:\Program Files\nodejs;" + $env:PATH</code>. Also ran <code>Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser</code> to allow npm scripts.</p>
+    </div>
+  </div>
+
+  <div class="issue">
+    <h3>Prisma 7 — url field removed from schema.prisma</h3>
+    <div class="error">Error: The datasource property `url` is no longer supported in schema files.</div>
+    <p>Prisma 7 removed the <code>url = env("DATABASE_URL")</code> line from <code>schema.prisma</code>. The URL is now configured in <code>prisma.config.ts</code> (for CLI/migrations) and passed via an adapter in the client constructor.</p>
+    <div class="fix">
+      <p><strong>Fix:</strong> Removed <code>url</code> from <code>schema.prisma</code>. Installed <code>@prisma/adapter-pg</code> and <code>pg</code>. Updated <code>lib/db.ts</code> to use <code>new PrismaPg({ connectionString: process.env.DATABASE_URL })</code> passed to <code>new PrismaClient({ adapter })</code>.</p>
+    </div>
+  </div>
+
+  <div class="issue">
+    <h3>Prisma 7 — generated client path changed</h3>
+    <div class="error">Cannot find module '@/app/generated/prisma'</div>
+    <p>Prisma 7 generates the client to a custom output path (<code>app/generated/prisma/</code>) with no <code>index.ts</code>, so directory imports fail.</p>
+    <div class="fix">
+      <p><strong>Fix:</strong> Import from the specific file: <code>import { PrismaClient } from "@/app/generated/prisma/client"</code></p>
+    </div>
+  </div>
+
+  <div class="issue">
+    <h3>Build failing — static pre-rendering hits the database</h3>
+    <div class="error">Error [PrismaClientKnownRequestError]: ECONNREFUSED — Export encountered an error on /albums</div>
+    <p>Next.js tries to statically pre-render pages at build time. Pages that call the database fail because there's no live DB connection during Vercel's build step.</p>
+    <div class="fix">
+      <p><strong>Fix:</strong> Added <code>export const dynamic = "force-dynamic"</code> to every page that queries the database. This tells Next.js to always server-render these pages on demand instead of pre-rendering.</p>
+    </div>
+  </div>
+
+  <div class="issue">
+    <h3>Supabase — can't reach database on port 5432</h3>
+    <div class="error">Error: P1001: Can't reach database server at db.upjmxwoaeckdziumiykh.supabase.co:5432</div>
+    <p>Port 5432 (direct Postgres) was blocked by the network. Also, the connection string from Supabase's UI has <code>[YOUR-PASSWORD]</code> as a placeholder — it never shows the real password.</p>
+    <div class="fix">
+      <p><strong>Fix:</strong> Used Supabase's <strong>Connect</strong> button → copied the two connection strings (pooler + direct). Reset the database password in Supabase settings. Updated <code>prisma.config.ts</code> to use <code>DIRECT_URL</code> for migrations, and <code>lib/db.ts</code> to use the pooler <code>DATABASE_URL</code> at runtime.</p>
+    </div>
+  </div>
+
+  <div class="issue">
+    <h3>Vercel build — Prisma client not found</h3>
+    <div class="error">Module not found: Can't resolve '@/app/generated/prisma/client'</div>
+    <p>The generated Prisma client (<code>app/generated/prisma/</code>) is in <code>.gitignore</code> so it's never pushed to GitHub. Vercel's build step starts with a fresh clone and never generates the client.</p>
+    <div class="fix">
+      <p><strong>Fix:</strong> Added <code>"postinstall": "prisma generate"</code> to <code>package.json</code> scripts. Vercel runs <code>npm install</code> then automatically runs <code>postinstall</code>, generating the client before the build starts.</p>
+    </div>
+  </div>
+
+  <div class="issue">
+    <h3>Cloudinary — file size too large</h3>
+    <div class="error">File size too large. Got 49253646. Maximum is 10485760.</div>
+    <p>Cloudinary's free tier has a 10MB per-file limit. RAW camera files are 20–50MB. The limit applies to the total file size even when uploading in chunks.</p>
+    <div class="fix">
+      <p><strong>Partial fix:</strong> Implemented chunked upload (8MB chunks with <code>X-Unique-Upload-Id</code> + <code>Content-Range</code> headers) but the total file size check still applies on the free tier. <strong>Full fix pending:</strong> Switching storage to Cloudflare R2 (10GB free, no file size limit).</p>
+    </div>
+  </div>
+
+  <div class="issue">
+    <h3>NextAuth v5 — wrong environment variable names</h3>
+    <div class="error">TypeError: Invalid URL — input: 'AUTH_URL=https://photo-portfolio...'</div>
+    <p>Two issues: (1) NextAuth v5 uses <code>AUTH_URL</code> not <code>NEXTAUTH_URL</code>. (2) The value was accidentally entered as <code>AUTH_URL=https://...</code> (including the key name) instead of just the URL value.</p>
+    <div class="fix">
+      <p><strong>Fix:</strong> In Vercel env vars, set Name = <code>AUTH_URL</code> and Value = <code>https://photo-portfolio-three-amber.vercel.app</code> (no prefix, no equals sign). Remove <code>NEXTAUTH_URL</code> from Vercel to avoid conflicts.</p>
+    </div>
+  </div>
+
+  <div class="issue">
+    <h3>GitHub OAuth — wrong app credentials / callback mismatch</h3>
+    <div class="error">Be careful! The redirect_uri is not associated with this application.</div>
+    <p>Three separate OAuth apps were created over the session, and the credentials in Vercel didn't match the app that had the correct callback URL registered. GitHub OAuth Apps also had issues with the PKCE flow.</p>
+    <div class="fix">
+      <p><strong>Fix:</strong> Created a new <strong>GitHub App</strong> (instead of OAuth App) called <code>MyPhotoPortfolio</code>. Set the callback URL to <code>https://photo-portfolio-three-amber.vercel.app/api/auth/callback/github</code>. Updated <code>AUTH_GITHUB_ID</code> and <code>AUTH_GITHUB_SECRET</code> in Vercel with the new app's credentials. Also created a custom <code>/login</code> page to replace NextAuth's built-in sign-in page.</p>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- TODO -->
+  <h2 id="todo">8. Left To Do</h2>
+  <div class="card">
+    <h3>RAW File Storage (Cloudflare R2)</h3>
+    <p>Cloudinary's free tier rejects files over 10MB. Plan is to replace Cloudinary with <strong>Cloudflare R2</strong> for storage — 10GB free, no per-file size limit, no egress fees. Would require replacing the signed upload flow and Cloudinary URL helpers with R2 presigned PUT URLs and direct R2 public URLs.</p>
+    <span class="badge yellow">Pending</span>
+  </div>
+  <div class="card">
+    <h3>Photo Editing in Admin</h3>
+    <p>Ability to edit a photo's title, description, and album assignment after upload.</p>
+    <span class="badge yellow">Pending</span>
+  </div>
+  <div class="card">
+    <h3>Set Album Cover Photo</h3>
+    <p>UI to pick which photo from an album becomes the cover image shown on the albums grid.</p>
+    <span class="badge yellow">Pending</span>
+  </div>
+  <div class="card">
+    <h3>Tags</h3>
+    <p>The database schema already has <code>Tag</code> and <code>PhotoTag</code> tables — just needs UI to assign and filter by tags.</p>
+    <span class="badge yellow">Pending</span>
+  </div>
+
+  <p style="margin-top: 48px; color: #3f3f46; font-size: 0.8rem; text-align: center;">Generated April 30, 2026</p>
+
+</div>
+</body>
+</html>
