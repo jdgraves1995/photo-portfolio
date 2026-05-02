@@ -3,13 +3,12 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { fullUrl } from "@/lib/cloudinary"
 import HeroCaptionEditor from "./HeroCaptionEditor"
 
 interface Photo {
   id: string
   title: string | null
-  cloudinaryPublicId: string
+  storageUrl: string
   width: number | null
   height: number | null
 }
@@ -100,7 +99,7 @@ export default function PhotoSlideshow({ photos, heroCaption, isAdmin }: Props) 
           <div className="flex-1 relative min-h-0">
             <Link href={`/photos/${photo.id}`} className="block w-full h-full">
               <Image
-                src={fullUrl(photo.cloudinaryPublicId)}
+                src={photo.storageUrl}
                 alt={photo.title ?? ""}
                 fill
                 className="object-contain p-6 lg:p-12"

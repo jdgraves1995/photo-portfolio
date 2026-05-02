@@ -4,25 +4,22 @@ import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(req: NextRequest) {
   const session = await auth()
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const body = await req.json()
-  const { public_id, secure_url, width, height, original_filename, albumId } = body
+  const { key, publicUrl, originalFilename, width, height, albumId } = await req.json()
 
-  if (!public_id || !secure_url) {
+  if (!key || !publicUrl) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
   }
 
   const photo = await db.photo.create({
     data: {
-      cloudinaryPublicId: public_id,
-      cloudinaryUrl: secure_url,
+      storageKey: key,
+      storageUrl: publicUrl,
       width: width ?? null,
       height: height ?? null,
-      originalFilename: original_filename ?? null,
-      title: original_filename ?? null,
+      originalFilename: originalFilename ?? null,
+      title: originalFilename ? originalFilename.replace(/\.[^.]+$/, "") : null,
       albumId: albumId || null,
     },
   })

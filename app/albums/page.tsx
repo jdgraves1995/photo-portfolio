@@ -10,10 +10,18 @@ export const metadata: Metadata = {
 }
 
 export default async function AlbumsPage() {
-  const albums = await db.album.findMany({
+  const raw = await db.album.findMany({
     orderBy: { createdAt: "desc" },
-    include: { _count: { select: { photos: true } } },
+    include: {
+      _count: { select: { photos: true } },
+      coverPhoto: { select: { storageUrl: true } },
+    },
   })
+
+  const albums = raw.map((a) => ({
+    ...a,
+    coverPhotoUrl: a.coverPhoto?.storageUrl ?? null,
+  }))
 
   return (
     <div className="min-h-screen bg-mist text-navy">

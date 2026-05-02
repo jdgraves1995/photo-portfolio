@@ -1,32 +1,23 @@
 import { auth } from "@/lib/auth"
-import { v2 as cloudinary } from "cloudinary"
+import { r2, BUCKET, PUBLIC_URL } from "@/lib/r2"
+import { PutObjectCommand } from "@aws-sdk/client-s3"
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 import { NextResponse } from "next/server"
+import { randomUUID } from "crypto"
 
-cloudinary.config({
-  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-})
-
-export async function POST() {
+export async function POST(req: Request) {
   const session = await auth()
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const timestamp = Math.round(Date.now() / 1000)
-  const folder = "portfolio"
+  const { filename, contentType } = await req.json()
+  const ext = filename.includes(".") ? filename.split(".").pop() : "bin"
+  const key = `photos/${randomUUID()}.${ext}`
 
-  const signature = cloudinary.utils.api_sign_request(
-    { timestamp, folder },
-    process.env.CLOUDINARY_API_SECRET!
+  const uploadUrl = await getSignedUrl(
+    r2,
+    new PutObjectCommand({ Bucket: BUCKET, Key: key, ContentType: contentType }),
+    { expiresIn: 3600 }
   )
 
-  return NextResponse.json({
-    signature,
-    timestamp,
-    folder,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  })
+  return NextResponse.json({ uploadUrl, key, publicUrl: `${PUBLIC_URL}/${key}` })
 }

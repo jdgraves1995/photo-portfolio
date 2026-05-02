@@ -1,13 +1,12 @@
 import Link from "next/link"
 import Image from "next/image"
-import { thumbUrl } from "@/lib/cloudinary"
 
 interface Album {
   id: string
   title: string
   description: string | null
   slug: string
-  coverPhotoId: string | null
+  coverPhotoUrl: string | null
   _count?: { photos: number }
 }
 
@@ -18,9 +17,9 @@ export default function AlbumCard({ album }: { album: Album }) {
       className="group block rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow duration-300"
     >
       <div className="aspect-[4/3] overflow-hidden bg-mist">
-        {album.coverPhotoId ? (
+        {album.coverPhotoUrl ? (
           <Image
-            src={thumbUrl(album.coverPhotoId)}
+            src={album.coverPhotoUrl}
             alt={album.title}
             width={600}
             height={400}

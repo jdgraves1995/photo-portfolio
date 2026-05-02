@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic"
 
 import { db } from "@/lib/db"
-import { fullUrl, ogImageUrl } from "@/lib/cloudinary"
 import Navbar from "@/components/Navbar"
 import { notFound } from "next/navigation"
 import Image from "next/image"
@@ -23,11 +22,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: photo.title ?? "Photo",
       description: photo.description ?? undefined,
-      images: [{ url: ogImageUrl(photo.cloudinaryPublicId), width: 1200, height: 630 }],
+      images: [{ url: photo.storageUrl }],
     },
     twitter: {
       card: "summary_large_image",
-      images: [ogImageUrl(photo.cloudinaryPublicId)],
+      images: [photo.storageUrl],
     },
   }
 }
@@ -54,7 +53,7 @@ export default async function PhotoPage({ params }: Props) {
 
         <div className="rounded-2xl overflow-hidden shadow-md bg-white">
           <Image
-            src={fullUrl(photo.cloudinaryPublicId)}
+            src={photo.storageUrl}
             alt={photo.title ?? ""}
             width={photo.width ?? 1200}
             height={photo.height ?? 800}

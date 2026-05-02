@@ -1,11 +1,10 @@
 import Link from "next/link"
 import Image from "next/image"
-import { thumbUrl } from "@/lib/cloudinary"
 
 interface Photo {
   id: string
   title: string | null
-  cloudinaryPublicId: string
+  storageUrl: string
   width: number | null
   height: number | null
 }
@@ -15,7 +14,7 @@ export default function PhotoCard({ photo }: { photo: Photo }) {
     <Link href={`/photos/${photo.id}`} className="group block">
       <div className="overflow-hidden rounded-xl bg-white shadow-sm transition-shadow duration-300 group-hover:shadow-md">
         <Image
-          src={thumbUrl(photo.cloudinaryPublicId)}
+          src={photo.storageUrl}
           alt={photo.title ?? ""}
           width={photo.width ?? 600}
           height={photo.height ?? 400}

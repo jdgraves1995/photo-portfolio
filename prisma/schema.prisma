@@ -13,25 +13,27 @@ model Album {
   description  String?
   slug         String   @unique
   coverPhotoId String?
-  photos       Photo[]
+  coverPhoto   Photo?   @relation("AlbumCover", fields: [coverPhotoId], references: [id], onDelete: SetNull)
+  photos       Photo[]  @relation("AlbumPhotos")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
 
 model Photo {
-  id                 String    @id @default(cuid())
-  title              String?
-  description        String?
-  cloudinaryPublicId String    @unique
-  cloudinaryUrl      String
-  originalFilename   String?
-  width              Int?
-  height             Int?
-  takenAt            DateTime?
-  album              Album?    @relation(fields: [albumId], references: [id], onDelete: SetNull)
-  albumId            String?
-  tags               PhotoTag[]
-  createdAt          DateTime  @default(now())
+  id               String     @id @default(cuid())
+  title            String?
+  description      String?
+  storageKey       String     @unique
+  storageUrl       String
+  originalFilename String?
+  width            Int?
+  height           Int?
+  takenAt          DateTime?
+  album            Album?     @relation("AlbumPhotos", fields: [albumId], references: [id], onDelete: SetNull)
+  albumId          String?
+  albumCoverFor    Album[]    @relation("AlbumCover")
+  tags             PhotoTag[]
+  createdAt        DateTime   @default(now())
 }
 
 model Tag {

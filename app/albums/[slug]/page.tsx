@@ -4,7 +4,6 @@ import { db } from "@/lib/db"
 import PhotoCard from "@/components/PhotoCard"
 import Navbar from "@/components/Navbar"
 import { notFound } from "next/navigation"
-import { ogImageUrl } from "@/lib/cloudinary"
 import Link from "next/link"
 import type { Metadata } from "next"
 
@@ -14,7 +13,10 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const album = await db.album.findUnique({ where: { slug } })
+  const album = await db.album.findUnique({
+    where: { slug },
+    include: { coverPhoto: { select: { storageUrl: true } } },
+  })
   if (!album) return {}
 
   return {
@@ -23,15 +25,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: album.title,
       description: album.description ?? undefined,
-      ...(album.coverPhotoId && {
-        images: [{ url: ogImageUrl(album.coverPhotoId), width: 1200, height: 630 }],
-      }),
+      ...(album.coverPhoto && { images: [{ url: album.coverPhoto.storageUrl }] }),
     },
     twitter: {
       card: "summary_large_image",
-      ...(album.coverPhotoId && {
-        images: [ogImageUrl(album.coverPhotoId)],
-      }),
+      ...(album.coverPhoto && { images: [album.coverPhoto.storageUrl] }),
     },
   }
 }
@@ -40,9 +38,7 @@ export default async function AlbumPage({ params }: Props) {
   const { slug } = await params
   const album = await db.album.findUnique({
     where: { slug },
-    include: {
-      photos: { orderBy: { createdAt: "desc" } },
-    },
+    include: { photos: { orderBy: { createdAt: "desc" } } },
   })
 
   if (!album) notFound()
