@@ -10,22 +10,16 @@ export default function HeroCaptionEditor({ caption }: { caption?: string | null
 
   if (!isEditing) {
     return (
-      <button
-        onClick={() => setIsEditing(true)}
-        className="group text-center w-full"
-      >
+      <button onClick={() => setIsEditing(true)} className="group text-center">
         {text ? (
-          <p className="text-navy/60 text-lg leading-relaxed italic group-hover:text-navy/80 transition-colors">
+          <p className="text-navy/50 text-sm italic group-hover:text-navy/70 transition-colors">
             {text}
           </p>
         ) : (
-          <p className="text-navy/30 text-base italic group-hover:text-navy/50 transition-colors">
-            + Add a description for visitors
+          <p className="text-navy/25 text-xs italic group-hover:text-navy/40 transition-colors">
+            + Add caption (only you can see this prompt)
           </p>
         )}
-        <span className="text-steel text-xs mt-1 block opacity-0 group-hover:opacity-100 transition-opacity">
-          click to edit
-        </span>
       </button>
     )
   }
@@ -39,32 +33,29 @@ export default function HeroCaptionEditor({ caption }: { caption?: string | null
           setIsEditing(false)
         })
       }}
-      className="flex flex-col items-center gap-3 w-full"
+      className="flex items-center gap-2 w-full max-w-lg"
     >
-      <textarea
+      <input
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Describe what the visitor is seeing..."
-        className="w-full text-center text-lg text-navy leading-relaxed italic bg-white/60 border border-steel/30 focus:border-steel focus:outline-none rounded-lg resize-none py-3 px-4"
-        rows={3}
+        placeholder="Caption for visitors…"
+        className="flex-1 text-center text-sm text-navy italic bg-white/70 border border-steel/30 focus:border-steel focus:outline-none rounded-lg py-1.5 px-3"
         autoFocus
       />
-      <div className="flex gap-3">
-        <button
-          type="submit"
-          disabled={isPending}
-          className="px-5 py-1.5 bg-navy text-white text-sm rounded-lg hover:bg-steel transition-colors disabled:opacity-50"
-        >
-          {isPending ? "Saving…" : "Save"}
-        </button>
-        <button
-          type="button"
-          onClick={() => { setText(caption ?? ""); setIsEditing(false) }}
-          className="px-5 py-1.5 text-navy/50 text-sm hover:text-navy transition-colors"
-        >
-          Cancel
-        </button>
-      </div>
+      <button
+        type="submit"
+        disabled={isPending}
+        className="px-3 py-1.5 bg-navy text-white text-xs rounded-lg hover:bg-steel transition-colors disabled:opacity-50 shrink-0"
+      >
+        {isPending ? "…" : "Save"}
+      </button>
+      <button
+        type="button"
+        onClick={() => { setText(caption ?? ""); setIsEditing(false) }}
+        className="text-navy/40 text-xs hover:text-navy transition-colors shrink-0"
+      >
+        Cancel
+      </button>
     </form>
   )
 }
