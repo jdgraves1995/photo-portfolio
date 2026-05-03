@@ -43,6 +43,13 @@ export default async function AlbumPage({ params }: Props) {
 
   if (!album) notFound()
 
+  const photos = album.coverPhotoId
+    ? [
+        ...album.photos.filter((p) => p.id === album.coverPhotoId),
+        ...album.photos.filter((p) => p.id !== album.coverPhotoId),
+      ]
+    : album.photos
+
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-canvas text-ink">
       <Navbar />
@@ -62,7 +69,7 @@ export default async function AlbumPage({ params }: Props) {
       {album.photos.length === 0 ? (
         <p className="text-muted text-sm text-center py-16">No photos in this album yet.</p>
       ) : (
-        <GalleryScroll photos={album.photos} />
+        <GalleryScroll photos={photos} />
       )}
     </div>
   )
