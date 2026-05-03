@@ -30,3 +30,30 @@ body {
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+::view-transition-old(root) {
+  animation: 300ms ease-out both fade-out;
+}
+::view-transition-new(root) {
+  animation: 300ms ease-in both fade-in-vt;
+}
+
+@keyframes fade-out {
+  to { opacity: 0; }
+}
+@keyframes fade-in-vt {
+  from { opacity: 0; }
+}
+
+::view-transition-old(site-header),
+::view-transition-new(site-header) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

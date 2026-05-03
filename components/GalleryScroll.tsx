@@ -78,7 +78,7 @@ export default function GalleryScroll({ photos }: Props) {
 
   return (
     <>
-      <div ref={containerRef} className="flex-1 min-h-0 relative overflow-hidden touch-none overscroll-none">
+      <div ref={containerRef} className="flex-1 min-h-0 relative overflow-hidden touch-none overscroll-none animate-[fadeIn_0.8s_ease-out_0.6s_both]">
         {photos.map((photo, i) => (
           <div
             key={photo.id}
