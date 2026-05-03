@@ -4,6 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 @AGENTS.md
 
+## Environment
+- Development environment is Windows with PowerShell - use PowerShell-compatible commands
+- For tool installations, prefer `winget` or document the command before running so user can review
+- Use Github MCP Server
+
 ## Commands
 
 ```bash
@@ -33,6 +38,11 @@ Photography portfolio with a public gallery and a protected admin panel.
 - NextAuth tables — `User`, `Account`, `Session`, `VerificationToken`
 
 Prisma client is generated to `app/generated/prisma/` (not the default location). The singleton client lives in `lib/db.ts` and uses `@prisma/adapter-pg` for the Supabase connection pool; `DIRECT_URL` is required for migrations.
+
+### Image Handling 
+- This project may contain DNG (raw) image files which Next.js Image component cannot render natively
+- Do NOT use `unoptimized` prop as a fix for blank/blurry images - diagnose the file format first
+- Check file extensions before applying image optimization changes
 
 ### Request flow
 
@@ -67,3 +77,7 @@ See `.env.example`. Required for dev:
 - `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
 - `AUTH_SECRET`, `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`
 - `NEXTAUTH_URL` (set to `http://localhost:3000` locally)
+
+## Debugging 
+- Before applying a fix, identify the root cause - do not patch symptoms (e.g., toggling flags, adding overrides)
+- If a fix doesn't work on first try, revert it before attempting the next approach
