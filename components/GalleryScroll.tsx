@@ -50,6 +50,7 @@ export default function GalleryScroll({ photos, captionSlot }: Props) {
     const el = containerRef.current
     if (!el) return
     const onTouchStart = (e: TouchEvent) => { touchStartY.current = e.touches[0].clientY }
+    const onTouchMove = (e: TouchEvent) => { e.preventDefault() }
     const onTouchEnd = (e: TouchEvent) => {
       if (touchStartY.current === null) return
       const delta = touchStartY.current - e.changedTouches[0].clientY
@@ -57,9 +58,11 @@ export default function GalleryScroll({ photos, captionSlot }: Props) {
       touchStartY.current = null
     }
     el.addEventListener("touchstart", onTouchStart)
+    el.addEventListener("touchmove", onTouchMove, { passive: false })
     el.addEventListener("touchend", onTouchEnd)
     return () => {
       el.removeEventListener("touchstart", onTouchStart)
+      el.removeEventListener("touchmove", onTouchMove)
       el.removeEventListener("touchend", onTouchEnd)
     }
   }, [goTo])
@@ -81,7 +84,7 @@ export default function GalleryScroll({ photos, captionSlot }: Props) {
           {captionSlot}
         </div>
       )}
-      <div ref={containerRef} className="flex-1 min-h-0 relative overflow-hidden">
+      <div ref={containerRef} className="flex-1 min-h-0 relative overflow-hidden touch-none overscroll-none">
         {photos.map((photo, i) => (
           <div
             key={photo.id}
