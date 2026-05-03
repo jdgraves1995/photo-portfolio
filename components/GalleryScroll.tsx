@@ -109,9 +109,41 @@ export default function GalleryScroll({ photos }: Props) {
           </div>
         ))}
 
-        <div className="absolute bottom-4 right-6 text-xs text-muted/50 tabular-nums pointer-events-none">
-          {current + 1} / {photos.length}
-        </div>
+        {photos.length > 1 && photos.length <= 25 && (
+          <>
+            {/* Mobile: horizontal dots, bottom-center */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-row items-center gap-1.5 z-10 md:hidden">
+              {photos.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goTo(i)}
+                  aria-label={`Go to photo ${i + 1}`}
+                  className={`rounded-full transition-all duration-300 ${
+                    i === current
+                      ? "w-5 h-1.5 bg-ink"
+                      : "w-1.5 h-1.5 bg-ink/30 hover:bg-ink/50"
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Desktop: vertical dots, right-center */}
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 hidden md:flex flex-col items-center gap-1.5 z-10">
+              {photos.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goTo(i)}
+                  aria-label={`Go to photo ${i + 1}`}
+                  className={`rounded-full transition-all duration-300 ${
+                    i === current
+                      ? "w-1.5 h-5 bg-ink"
+                      : "w-1.5 h-1.5 bg-ink/30 hover:bg-ink/50"
+                  }`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </>
   )

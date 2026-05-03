@@ -16,3 +16,16 @@ export async function updateHeroCaption(caption: string) {
 
   revalidatePath("/")
 }
+
+export async function updateLandingText(heading: string, tagline: string) {
+  const session = await auth()
+  if (!session) throw new Error("Unauthorized")
+
+  await db.siteSettings.upsert({
+    where: { id: "default" },
+    create: { id: "default", landingHeading: heading, landingTagline: tagline },
+    update: { landingHeading: heading, landingTagline: tagline },
+  })
+
+  revalidatePath("/")
+}
