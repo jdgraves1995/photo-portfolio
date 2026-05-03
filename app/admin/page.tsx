@@ -40,6 +40,12 @@ export default async function AdminPage() {
           Manage Albums
         </Link>
         <Link
+          href="/admin/photos"
+          className="border border-white/20 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:border-white/40 transition-colors"
+        >
+          Manage Photos
+        </Link>
+        <Link
           href="/"
           className="border border-white/20 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:border-white/40 transition-colors"
         >
