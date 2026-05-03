@@ -32,10 +32,10 @@ body {
 }
 
 ::view-transition-old(root) {
-  animation: 300ms ease-out both fade-out;
+  animation: 500ms ease-out both fade-out;
 }
 ::view-transition-new(root) {
-  animation: 300ms ease-in both fade-in-vt;
+  animation: 500ms ease-in both fade-in-vt;
 }
 
 @keyframes fade-out {
