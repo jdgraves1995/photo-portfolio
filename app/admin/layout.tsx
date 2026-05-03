@@ -31,6 +31,9 @@ export default async function AdminLayout({
             <Link href="/admin/albums" className="text-white/60 hover:text-white transition-colors">
               Albums
             </Link>
+            <Link href="/admin/photos" className="text-white/60 hover:text-white transition-colors">
+              Photos
+            </Link>
             <SignOutButton />
           </div>
         </div>
