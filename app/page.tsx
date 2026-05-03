@@ -2,7 +2,8 @@ export const dynamic = "force-dynamic"
 
 import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
-import PhotoSlideshow from "@/components/PhotoSlideshow"
+import GalleryScroll from "@/components/GalleryScroll"
+import HeroCaptionEditor from "@/components/HeroCaptionEditor"
 import Navbar from "@/components/Navbar"
 import type { Metadata } from "next"
 
@@ -15,15 +16,23 @@ export default async function GalleryPage() {
   const [session, settings, photos] = await Promise.all([
     auth(),
     db.siteSettings.findUnique({ where: { id: "default" } }),
-    db.photo.findMany({ orderBy: { createdAt: "desc" }, take: 48 }),
+    db.photo.findMany({ orderBy: { createdAt: "desc" }, take: 20 }),
   ])
 
+  const isAdmin = !!session
+
+  const captionSlot = isAdmin ? (
+    <HeroCaptionEditor caption={settings?.heroCaption} />
+  ) : settings?.heroCaption ? (
+    <p className="text-muted text-sm italic text-center">{settings.heroCaption}</p>
+  ) : null
+
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-mist">
+    <div className="min-h-screen bg-canvas">
       <Navbar />
 
       {photos.length === 0 ? (
-        <div className="flex-1 flex flex-col items-center justify-center text-navy/30 gap-2">
+        <div className="flex flex-col items-center justify-center py-40 text-muted gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="w-10 h-10"
@@ -41,11 +50,7 @@ export default async function GalleryPage() {
           <p className="text-sm">No photos yet</p>
         </div>
       ) : (
-        <PhotoSlideshow
-          photos={photos}
-          heroCaption={settings?.heroCaption}
-          isAdmin={!!session}
-        />
+        <GalleryScroll photos={photos} captionSlot={captionSlot} />
       )}
     </div>
   )

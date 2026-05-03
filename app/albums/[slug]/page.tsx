@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic"
 
 import { db } from "@/lib/db"
-import PhotoCard from "@/components/PhotoCard"
+import GalleryScroll from "@/components/GalleryScroll"
 import Navbar from "@/components/Navbar"
 import { notFound } from "next/navigation"
 import Link from "next/link"
@@ -44,28 +44,26 @@ export default async function AlbumPage({ params }: Props) {
   if (!album) notFound()
 
   return (
-    <div className="min-h-screen bg-mist text-navy">
+    <div className="min-h-screen bg-canvas text-ink">
       <Navbar />
-      <main className="max-w-7xl mx-auto px-6 py-10">
-        <Link href="/albums" className="text-steel hover:text-navy text-sm mb-6 inline-block transition-colors">
+      <div className="max-w-3xl mx-auto px-6 pt-12 pb-2">
+        <Link href="/albums" className="text-sm text-muted hover:text-ink transition-colors">
           &larr; All albums
         </Link>
-        <h1 className="text-3xl font-semibold">{album.title}</h1>
-        {album.description && (
-          <p className="text-navy/60 mt-2 max-w-2xl leading-relaxed">{album.description}</p>
-        )}
-        <p className="text-navy/30 text-sm mt-2">{album.photos.length} photos</p>
+        <div className="mt-6">
+          <h1 className="font-display text-3xl font-normal text-ink">{album.title}</h1>
+          {album.description && (
+            <p className="text-muted text-sm mt-2 italic leading-relaxed">{album.description}</p>
+          )}
+          <p className="text-muted text-xs mt-2">{album.photos.length} photos</p>
+        </div>
+      </div>
 
-        {album.photos.length === 0 ? (
-          <p className="text-navy/40 mt-12">No photos in this album yet.</p>
-        ) : (
-          <div className="max-w-2xl mx-auto mt-12 space-y-20">
-            {album.photos.map((photo) => (
-              <PhotoCard key={photo.id} photo={photo} />
-            ))}
-          </div>
-        )}
-      </main>
+      {album.photos.length === 0 ? (
+        <p className="text-muted text-sm text-center py-16">No photos in this album yet.</p>
+      ) : (
+        <GalleryScroll photos={album.photos} className="pt-12 pb-16" />
+      )}
     </div>
   )
 }

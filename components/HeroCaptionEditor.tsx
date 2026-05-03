@@ -12,11 +12,11 @@ export default function HeroCaptionEditor({ caption }: { caption?: string | null
     return (
       <button onClick={() => setIsEditing(true)} className="group text-center">
         {text ? (
-          <p className="text-navy/50 text-sm italic group-hover:text-navy/70 transition-colors">
+          <p className="text-muted text-sm italic group-hover:text-ink transition-colors">
             {text}
           </p>
         ) : (
-          <p className="text-navy/25 text-xs italic group-hover:text-navy/40 transition-colors">
+          <p className="text-muted/50 text-xs italic group-hover:text-muted transition-colors">
             + Add caption (only you can see this prompt)
           </p>
         )}
@@ -39,20 +39,20 @@ export default function HeroCaptionEditor({ caption }: { caption?: string | null
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="Caption for visitors…"
-        className="flex-1 text-center text-sm text-navy italic bg-white/70 border border-steel/30 focus:border-steel focus:outline-none rounded-lg py-1.5 px-3"
+        className="flex-1 text-center text-sm italic bg-canvas border border-rule focus:border-sage focus:outline-none rounded-lg py-1.5 px-3 text-ink"
         autoFocus
       />
       <button
         type="submit"
         disabled={isPending}
-        className="px-3 py-1.5 bg-navy text-white text-xs rounded-lg hover:bg-steel transition-colors disabled:opacity-50 shrink-0"
+        className="px-3 py-1.5 bg-ink text-canvas text-xs rounded-lg hover:bg-sage transition-colors disabled:opacity-50 shrink-0"
       >
         {isPending ? "…" : "Save"}
       </button>
       <button
         type="button"
         onClick={() => { setText(caption ?? ""); setIsEditing(false) }}
-        className="text-navy/40 text-xs hover:text-navy transition-colors shrink-0"
+        className="text-muted text-xs hover:text-ink transition-colors shrink-0"
       >
         Cancel
       </button>

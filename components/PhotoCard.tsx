@@ -12,18 +12,16 @@ interface Photo {
 export default function PhotoCard({ photo }: { photo: Photo }) {
   return (
     <Link href={`/photos/${photo.id}`} className="group block">
-      <div className="overflow-hidden rounded-xl bg-white shadow-sm transition-shadow duration-300 group-hover:shadow-md">
-        <Image
-          src={photo.storageUrl}
-          alt={photo.title ?? ""}
-          width={photo.width ?? 600}
-          height={photo.height ?? 400}
-          className="w-full h-auto transition-transform duration-700 group-hover:scale-[1.02]"
-          sizes="(max-width: 768px) 100vw, 720px"
-        />
-      </div>
+      <Image
+        src={photo.storageUrl}
+        alt={photo.title ?? ""}
+        width={photo.width ?? 600}
+        height={photo.height ?? 400}
+        className="w-full h-auto transition-opacity duration-300 group-hover:opacity-90"
+        sizes="(max-width: 768px) 100vw, 720px"
+      />
       {photo.title && (
-        <p className="mt-3 text-navy/50 text-sm tracking-wide text-center">
+        <p className="mt-3 text-muted text-sm italic text-center">
           {photo.title}
         </p>
       )}
