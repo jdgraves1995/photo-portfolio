@@ -20,7 +20,7 @@ export default function GalleryScroll({ photos }: Props) {
   const [current, setCurrent] = useState(0)
   const currentRef = useRef(0)
   const lockedRef = useRef(false)
-  const touchStartY = useRef<number | null>(null)
+  const touchStartX = useRef<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const goTo = useCallback((index: number) => {
@@ -48,13 +48,13 @@ export default function GalleryScroll({ photos }: Props) {
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
-    const onTouchStart = (e: TouchEvent) => { touchStartY.current = e.touches[0].clientY }
+    const onTouchStart = (e: TouchEvent) => { touchStartX.current = e.touches[0].clientX }
     const onTouchMove = (e: TouchEvent) => { e.preventDefault() }
     const onTouchEnd = (e: TouchEvent) => {
-      if (touchStartY.current === null) return
-      const delta = touchStartY.current - e.changedTouches[0].clientY
+      if (touchStartX.current === null) return
+      const delta = touchStartX.current - e.changedTouches[0].clientX
       if (Math.abs(delta) > 50) goTo(currentRef.current + (delta > 0 ? 1 : -1))
-      touchStartY.current = null
+      touchStartX.current = null
     }
     el.addEventListener("touchstart", onTouchStart, { passive: false })
     el.addEventListener("touchmove", onTouchMove, { passive: false })
@@ -87,19 +87,37 @@ export default function GalleryScroll({ photos }: Props) {
             }`}
           >
             <div className="max-w-4xl w-full">
-              <Link href={`/photos/${photo.id}`} className="block overflow-hidden rounded-2xl">
-                <Image
-                  src={photo.storageUrl}
-                  alt={photo.title ?? ""}
-                  width={photo.width ?? 1200}
-                  height={photo.height ?? 800}
-                  quality={100}
-                  priority={i === 0}
-                  className="w-full h-auto"
-                  style={{ maxHeight: "85vh", objectFit: "contain" }}
-                  sizes="(max-width: 768px) 100vw, 900px"
-                />
-              </Link>
+              <div className="relative overflow-hidden rounded-2xl">
+                <Link href={`/photos/${photo.id}`} className="block">
+                  <Image
+                    src={photo.storageUrl}
+                    alt={photo.title ?? ""}
+                    width={photo.width ?? 1200}
+                    height={photo.height ?? 800}
+                    quality={100}
+                    priority={i === 0}
+                    className="w-full h-auto"
+                    style={{ maxHeight: "85vh", objectFit: "contain" }}
+                    sizes="(max-width: 768px) 100vw, 900px"
+                  />
+                </Link>
+                {photos.length > 1 && photos.length <= 25 && (
+                  <div className="absolute bottom-3 left-3 flex flex-row items-center gap-1.5 z-10">
+                    {photos.map((_, j) => (
+                      <button
+                        key={j}
+                        onClick={() => goTo(j)}
+                        aria-label={`Go to photo ${j + 1}`}
+                        className={`rounded-full transition-all duration-300 ${
+                          j === current
+                            ? "w-5 h-1.5 bg-white/80"
+                            : "w-1.5 h-1.5 bg-white/40 hover:bg-white/60"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
               {photo.title && (
                 <p className="mt-4 text-center text-sm italic text-muted">
                   {photo.title}
@@ -109,41 +127,6 @@ export default function GalleryScroll({ photos }: Props) {
           </div>
         ))}
 
-        {photos.length > 1 && photos.length <= 25 && (
-          <>
-            {/* Mobile: horizontal dots, bottom-center */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-row items-center gap-1.5 z-10 md:hidden">
-              {photos.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => goTo(i)}
-                  aria-label={`Go to photo ${i + 1}`}
-                  className={`rounded-full transition-all duration-300 ${
-                    i === current
-                      ? "w-5 h-1.5 bg-ink"
-                      : "w-1.5 h-1.5 bg-ink/30 hover:bg-ink/50"
-                  }`}
-                />
-              ))}
-            </div>
-
-            {/* Desktop: vertical dots, right-center */}
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 hidden md:flex flex-col items-center gap-1.5 z-10">
-              {photos.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => goTo(i)}
-                  aria-label={`Go to photo ${i + 1}`}
-                  className={`rounded-full transition-all duration-300 ${
-                    i === current
-                      ? "w-1.5 h-5 bg-ink"
-                      : "w-1.5 h-1.5 bg-ink/30 hover:bg-ink/50"
-                  }`}
-                />
-              ))}
-            </div>
-          </>
-        )}
       </div>
     </>
   )
