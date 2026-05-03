@@ -57,7 +57,7 @@ export default function GalleryScroll({ photos, captionSlot }: Props) {
       if (Math.abs(delta) > 50) goTo(currentRef.current + (delta > 0 ? 1 : -1))
       touchStartY.current = null
     }
-    el.addEventListener("touchstart", onTouchStart)
+    el.addEventListener("touchstart", onTouchStart, { passive: false })
     el.addEventListener("touchmove", onTouchMove, { passive: false })
     el.addEventListener("touchend", onTouchEnd)
     return () => {

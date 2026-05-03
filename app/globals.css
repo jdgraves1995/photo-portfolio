@@ -23,4 +23,5 @@
 body {
   background: var(--color-canvas);
   color: var(--color-ink);
+  overscroll-behavior: none;
 }
