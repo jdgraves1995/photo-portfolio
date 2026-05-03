@@ -44,9 +44,9 @@ export default async function AlbumPage({ params }: Props) {
   if (!album) notFound()
 
   return (
-    <div className="min-h-screen bg-canvas text-ink">
+    <div className="flex flex-col h-screen overflow-hidden bg-canvas text-ink">
       <Navbar />
-      <div className="max-w-3xl mx-auto px-6 pt-12 pb-2">
+      <div className="max-w-3xl w-full mx-auto px-6 pt-10 pb-4 shrink-0">
         <Link href="/albums" className="text-sm text-muted hover:text-ink transition-colors">
           &larr; All albums
         </Link>
@@ -62,7 +62,7 @@ export default async function AlbumPage({ params }: Props) {
       {album.photos.length === 0 ? (
         <p className="text-muted text-sm text-center py-16">No photos in this album yet.</p>
       ) : (
-        <GalleryScroll photos={album.photos} className="pt-12 pb-16" />
+        <GalleryScroll photos={album.photos} />
       )}
     </div>
   )

@@ -28,7 +28,7 @@ export default async function GalleryPage() {
   ) : null
 
   return (
-    <div className="min-h-screen bg-canvas">
+    <div className="flex flex-col h-screen overflow-hidden bg-canvas">
       <Navbar />
 
       {photos.length === 0 ? (
