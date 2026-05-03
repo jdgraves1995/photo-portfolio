@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PhotoPage({ params }: Props) {
   const { id } = await params
   const [photo, session] = await Promise.all([
-    db.photo.findUnique({ where: { id }, include: { album: true } }),
+    db.photo.findUnique({ where: { id }, include: { album: true, tags: { include: { tag: true } } } }),
     auth(),
   ])
 
@@ -66,7 +66,7 @@ export default async function PhotoPage({ params }: Props) {
           />
         </div>
 
-        {(photo.title || photo.description || photo.album) && (
+        {(photo.title || photo.description || photo.album || photo.tags.length > 0) && (
           <div className="mt-6 text-center space-y-1">
             {photo.title && (
               <h1 className="text-2xl font-semibold text-navy">{photo.title}</h1>
@@ -81,6 +81,18 @@ export default async function PhotoPage({ params }: Props) {
             )}
             {photo.description && (
               <p className="text-navy/60 leading-relaxed pt-2 italic">{photo.description}</p>
+            )}
+            {photo.tags.length > 0 && (
+              <div className="flex flex-wrap justify-center gap-2 pt-3">
+                {photo.tags.map(({ tag }) => (
+                  <span
+                    key={tag.id}
+                    className="text-xs bg-navy/10 text-navy/60 rounded-full px-3 py-1"
+                  >
+                    {tag.name}
+                  </span>
+                ))}
+              </div>
             )}
           </div>
         )}

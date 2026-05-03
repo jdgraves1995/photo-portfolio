@@ -2,10 +2,17 @@
 
 import { useDropzone } from "react-dropzone"
 import { useState, useCallback } from "react"
+import TagInput from "@/components/admin/TagInput"
 
 interface Album {
   id: string
   title: string
+}
+
+interface Tag {
+  id: string
+  name: string
+  slug: string
 }
 
 interface UploadState {
@@ -27,8 +34,9 @@ async function getImageDimensions(file: File): Promise<{ width: number | null; h
   })
 }
 
-export default function UploadDropzone({ albums }: { albums: Album[] }) {
+export default function UploadDropzone({ albums, existingTags }: { albums: Album[]; existingTags: Tag[] }) {
   const [selectedAlbumId, setSelectedAlbumId] = useState("")
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [uploads, setUploads] = useState<UploadState[]>([])
 
   const updateUpload = useCallback((name: string, patch: Partial<UploadState>) => {
@@ -66,11 +74,11 @@ export default function UploadDropzone({ albums }: { albums: Album[] }) {
       const saveRes = await fetch("/api/upload/complete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key, publicUrl, originalFilename: file.name, width, height, albumId: selectedAlbumId || null }),
+        body: JSON.stringify({ key, publicUrl, originalFilename: file.name, width, height, albumId: selectedAlbumId || null, tagNames: selectedTags }),
       })
       if (!saveRes.ok) throw new Error("Failed to save photo")
     },
-    [selectedAlbumId, updateUpload]
+    [selectedAlbumId, selectedTags, updateUpload]
   )
 
   const onDrop = useCallback(
@@ -95,21 +103,28 @@ export default function UploadDropzone({ albums }: { albums: Album[] }) {
 
   return (
     <div className="space-y-6">
-      {albums.length > 0 && (
-        <div>
-          <label className="block text-sm text-white/50 mb-1">Add to album (optional)</label>
-          <select
-            value={selectedAlbumId}
-            onChange={(e) => setSelectedAlbumId(e.target.value)}
-            className="bg-white/10 border border-white/20 text-white rounded-lg px-3 py-2 text-sm w-72 focus:outline-none focus:ring-1 focus:ring-white/30"
-          >
-            <option value="">No album</option>
-            {albums.map((a) => (
-              <option key={a.id} value={a.id}>{a.title}</option>
-            ))}
-          </select>
+      <div className="flex flex-wrap gap-6">
+        {albums.length > 0 && (
+          <div>
+            <label className="block text-sm text-white/50 mb-1">Add to album (optional)</label>
+            <select
+              value={selectedAlbumId}
+              onChange={(e) => setSelectedAlbumId(e.target.value)}
+              className="bg-white/10 border border-white/20 text-white rounded-lg px-3 py-2 text-sm w-72 focus:outline-none focus:ring-1 focus:ring-white/30"
+            >
+              <option value="">No album</option>
+              {albums.map((a) => (
+                <option key={a.id} value={a.id}>{a.title}</option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        <div className="flex-1 min-w-[240px]">
+          <label className="block text-sm text-white/50 mb-1">Tags (optional)</label>
+          <TagInput existingTags={existingTags} selected={selectedTags} onChange={setSelectedTags} />
         </div>
-      )}
+      </div>
 
       <div
         {...getRootProps()}
