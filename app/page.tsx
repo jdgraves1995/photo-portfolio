@@ -1,9 +1,7 @@
 export const dynamic = "force-dynamic"
 
 import { db } from "@/lib/db"
-import { auth } from "@/lib/auth"
 import GalleryScroll from "@/components/GalleryScroll"
-import HeroCaptionEditor from "@/components/HeroCaptionEditor"
 import Navbar from "@/components/Navbar"
 import type { Metadata } from "next"
 
@@ -13,19 +11,7 @@ export const metadata: Metadata = {
 }
 
 export default async function GalleryPage() {
-  const [session, settings, photos] = await Promise.all([
-    auth(),
-    db.siteSettings.findUnique({ where: { id: "default" } }),
-    db.photo.findMany({ orderBy: { createdAt: "desc" }, take: 20 }),
-  ])
-
-  const isAdmin = !!session
-
-  const captionSlot = isAdmin ? (
-    <HeroCaptionEditor caption={settings?.heroCaption} />
-  ) : settings?.heroCaption ? (
-    <p className="text-muted text-sm italic text-center">{settings.heroCaption}</p>
-  ) : null
+  const photos = await db.photo.findMany({ orderBy: { createdAt: "desc" }, take: 20 })
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-canvas">
@@ -50,7 +36,7 @@ export default async function GalleryPage() {
           <p className="text-sm">No photos yet</p>
         </div>
       ) : (
-        <GalleryScroll photos={photos} captionSlot={captionSlot} />
+        <GalleryScroll photos={photos} />
       )}
     </div>
   )

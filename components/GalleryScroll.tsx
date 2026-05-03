@@ -14,10 +14,9 @@ interface Photo {
 
 interface Props {
   photos: Photo[]
-  captionSlot?: React.ReactNode
 }
 
-export default function GalleryScroll({ photos, captionSlot }: Props) {
+export default function GalleryScroll({ photos }: Props) {
   const [current, setCurrent] = useState(0)
   const currentRef = useRef(0)
   const lockedRef = useRef(false)
@@ -79,11 +78,6 @@ export default function GalleryScroll({ photos, captionSlot }: Props) {
 
   return (
     <>
-      {captionSlot && (
-        <div className="flex justify-center py-3 border-b border-rule shrink-0">
-          {captionSlot}
-        </div>
-      )}
       <div ref={containerRef} className="flex-1 min-h-0 relative overflow-hidden touch-none overscroll-none">
         {photos.map((photo, i) => (
           <div
