@@ -21,7 +21,7 @@ export default function HeroPhotoEditor({ currentPhotoId }: { currentPhotoId?: s
     const all: PhotoItem[] = []
     let cursor: string | null = null
     do {
-      const url = cursor ? `/api/photos?cursor=${cursor}` : "/api/photos"
+      const url: string = cursor ? `/api/photos?cursor=${cursor}` : "/api/photos"
       const data = await fetch(url).then((r) => r.json())
       all.push(...data.photos)
       cursor = data.nextCursor
