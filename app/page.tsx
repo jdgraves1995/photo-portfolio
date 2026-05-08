@@ -1,10 +1,8 @@
 export const dynamic = "force-dynamic"
 
 import { db } from "@/lib/db"
-import { auth } from "@/lib/auth"
-import GalleryScroll from "@/components/GalleryScroll"
-import LandingTextEditor from "@/components/LandingTextEditor"
 import Navbar from "@/components/Navbar"
+import Image from "next/image"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -12,44 +10,51 @@ export const metadata: Metadata = {
   description: "A collection of photographs.",
 }
 
-export default async function GalleryPage() {
-  const [photos, settings, session] = await Promise.all([
-    db.photo.findMany({ orderBy: { createdAt: "desc" }, take: 20 }),
+export default async function HeroPage() {
+  const [photo, settings] = await Promise.all([
+    db.photo.findFirst({ orderBy: { createdAt: "desc" } }),
     db.siteSettings.findUnique({ where: { id: "default" } }),
-    auth(),
   ])
 
-  return (
-    <div className="flex flex-col h-screen overflow-hidden bg-canvas">
-      <Navbar />
+  if (!photo) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-canvas text-muted">
+        <p className="text-sm">No photos yet</p>
+      </div>
+    )
+  }
 
-      {photos.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-40 text-muted gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-10 h-10"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1}
-              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-            />
-          </svg>
-          <p className="text-sm">No photos yet</p>
+  return (
+    <div className="relative h-screen overflow-hidden">
+      <Image
+        src={photo.storageUrl}
+        alt={photo.title ?? ""}
+        fill
+        quality={100}
+        className="object-cover"
+        priority
+        sizes="100vw"
+      />
+
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/50 pointer-events-none" />
+
+      <Navbar transparent />
+
+      {(settings?.landingHeading || settings?.landingTagline) && (
+        <div className="absolute inset-0 flex flex-col items-center justify-end pb-20 px-6 pointer-events-none">
+          <div className="flex flex-col items-center gap-2 animate-[fadeIn_0.8s_ease-out_0.6s_both]">
+            {settings?.landingHeading && (
+              <h1 className="font-display text-4xl sm:text-5xl font-normal text-white tracking-tight text-center drop-shadow-md">
+                {settings.landingHeading}
+              </h1>
+            )}
+            {settings?.landingTagline && (
+              <p className="text-sm sm:text-base italic text-white/80 text-center drop-shadow-sm">
+                {settings.landingTagline}
+              </p>
+            )}
+          </div>
         </div>
-      ) : (
-        <>
-          <LandingTextEditor
-            heading={settings?.landingHeading ?? null}
-            tagline={settings?.landingTagline ?? null}
-            isAdmin={!!session}
-          />
-          <GalleryScroll photos={photos} />
-        </>
       )}
     </div>
   )

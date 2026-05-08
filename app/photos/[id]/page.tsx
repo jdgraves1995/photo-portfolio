@@ -47,7 +47,7 @@ export default async function PhotoPage({ params }: Props) {
       <Navbar />
       <main className="max-w-3xl mx-auto px-6 py-10">
         <Link
-          href={photo.album ? `/albums/${photo.album.slug}` : "/"}
+          href={photo.album ? `/albums/${photo.album.slug}` : "/gallery"}
           className="text-muted hover:text-ink text-sm mb-8 inline-block transition-colors"
         >
           {photo.album ? `← ${photo.album.title}` : "← Gallery"}
