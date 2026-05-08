@@ -48,7 +48,7 @@ export default async function HeroPage() {
       <Navbar transparent />
 
       {(settings?.landingHeading || settings?.landingTagline) && (
-        <div className="absolute inset-0 flex flex-col items-center justify-end pb-20 px-6 pointer-events-none">
+        <div className="absolute inset-0 flex flex-col items-center justify-start pt-20 px-6 pointer-events-none">
           <div className="flex flex-col items-center gap-2 animate-[fadeIn_0.8s_ease-out_0.6s_both]">
             {settings?.landingHeading && (
               <h1 className="font-display text-4xl sm:text-5xl font-normal text-white tracking-tight text-center drop-shadow-md">
