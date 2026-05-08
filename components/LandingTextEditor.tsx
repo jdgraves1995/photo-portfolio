@@ -42,7 +42,7 @@ export default function LandingTextEditor({ heading, tagline, isAdmin }: Props) 
       return (
         <button
           onClick={() => setIsEditing(true)}
-          className="group w-full flex flex-col items-center justify-center py-5 animate-[fadeIn_0.8s_ease-out_both]"
+          className="group w-full flex flex-col items-center justify-center py-2 animate-[fadeIn_0.8s_ease-out_both]"
         >
           {display}
         </button>
@@ -50,7 +50,7 @@ export default function LandingTextEditor({ heading, tagline, isAdmin }: Props) 
     }
 
     return (
-      <div className="flex flex-col items-center justify-center py-5 animate-[fadeIn_0.8s_ease-out_both]">
+      <div className="flex flex-col items-center justify-center py-2 animate-[fadeIn_0.8s_ease-out_both]">
         {display}
       </div>
     )

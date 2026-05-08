@@ -97,7 +97,7 @@ export default function GalleryScroll({ photos }: Props) {
                     quality={100}
                     priority={i === 0}
                     className="w-full h-auto"
-                    style={{ maxHeight: "85vh", objectFit: "contain" }}
+                    style={{ maxHeight: "92vh", objectFit: "contain" }}
                     sizes="(max-width: 768px) 100vw, 900px"
                   />
                 </Link>
