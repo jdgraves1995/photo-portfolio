@@ -15,12 +15,13 @@ export default async function AlbumsPage() {
     include: {
       _count: { select: { photos: true } },
       coverPhoto: { select: { storageUrl: true } },
+      photos: { select: { storageUrl: true }, orderBy: { createdAt: "asc" }, take: 1 },
     },
   })
 
   const albums = raw.map((a) => ({
     ...a,
-    coverPhotoUrl: a.coverPhoto?.storageUrl ?? null,
+    coverPhotoUrl: a.coverPhoto?.storageUrl ?? a.photos[0]?.storageUrl ?? null,
   }))
 
   return (
