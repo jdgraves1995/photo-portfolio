@@ -30,6 +30,19 @@ export async function setHeroPhoto(photoId: string) {
   revalidatePath("/")
 }
 
+export async function updateHeroText(heading: string, tagline: string) {
+  const session = await auth()
+  if (!session) throw new Error("Unauthorized")
+
+  await db.siteSettings.upsert({
+    where: { id: "default" },
+    create: { id: "default", heroHeading: heading, heroTagline: tagline },
+    update: { heroHeading: heading, heroTagline: tagline },
+  })
+
+  revalidatePath("/")
+}
+
 export async function updateLandingText(heading: string, tagline: string) {
   const session = await auth()
   if (!session) throw new Error("Unauthorized")

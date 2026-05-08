@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import Navbar from "@/components/Navbar"
 import HeroPhotoEditor from "@/components/HeroPhotoEditor"
+import HeroTextEditor from "@/components/HeroTextEditor"
 import Image from "next/image"
 import type { Metadata } from "next"
 
@@ -47,22 +48,27 @@ export default async function HeroPage() {
 
       <Navbar transparent />
 
-      {(settings?.landingHeading || settings?.landingTagline) && (
+      {!!session ? (
+        <HeroTextEditor
+          heading={settings?.heroHeading ?? null}
+          tagline={settings?.heroTagline ?? null}
+        />
+      ) : (settings?.heroHeading || settings?.heroTagline) ? (
         <div className="absolute inset-0 flex flex-col items-center justify-start pt-20 px-6 pointer-events-none">
           <div className="flex flex-col items-center gap-2 animate-[fadeIn_0.8s_ease-out_0.6s_both]">
-            {settings?.landingHeading && (
+            {settings.heroHeading && (
               <h1 className="font-display text-4xl sm:text-5xl font-normal text-white tracking-tight text-center drop-shadow-md">
-                {settings.landingHeading}
+                {settings.heroHeading}
               </h1>
             )}
-            {settings?.landingTagline && (
+            {settings.heroTagline && (
               <p className="text-sm sm:text-base italic text-white/80 text-center drop-shadow-sm">
-                {settings.landingTagline}
+                {settings.heroTagline}
               </p>
             )}
           </div>
         </div>
-      )}
+      ) : null}
 
       {!!session && <HeroPhotoEditor currentPhotoId={photo.id} />}
     </div>

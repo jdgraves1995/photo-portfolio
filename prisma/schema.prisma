@@ -56,6 +56,8 @@ model SiteSettings {
   id             String  @id @default("default")
   heroPhotoId    String?
   heroCaption    String?
+  heroHeading    String?
+  heroTagline    String?
   landingHeading String?
   landingTagline String?
 }
