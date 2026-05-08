@@ -118,11 +118,6 @@ export default function GalleryScroll({ photos }: Props) {
                   </div>
                 )}
               </div>
-              {photo.title && (
-                <p className="mt-4 text-center text-sm italic text-muted">
-                  {photo.title}
-                </p>
-              )}
             </div>
           </div>
         ))}

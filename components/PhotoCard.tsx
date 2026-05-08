@@ -20,11 +20,6 @@ export default function PhotoCard({ photo }: { photo: Photo }) {
         className="w-full h-auto transition-opacity duration-300 group-hover:opacity-90"
         sizes="(max-width: 768px) 100vw, 720px"
       />
-      {photo.title && (
-        <p className="mt-3 text-muted text-sm italic text-center">
-          {photo.title}
-        </p>
-      )}
     </Link>
   )
 }

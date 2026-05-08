@@ -66,9 +66,6 @@ export default async function PhotoPage({ params }: Props) {
 
         {(photo.title || photo.description || photo.album || photo.tags.length > 0) && (
           <div className="mt-6 text-center space-y-1">
-            {photo.title && (
-              <h1 className="font-display text-2xl font-normal text-ink">{photo.title}</h1>
-            )}
             {photo.album && (
               <Link
                 href={`/albums/${photo.album.slug}`}

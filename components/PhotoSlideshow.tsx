@@ -121,9 +121,7 @@ export default function PhotoSlideshow({ photos, heroCaption, isAdmin }: Props) 
                 )
               )
             ) : (
-              photo.title && (
-                <p className="text-navy/50 text-sm italic text-center">{photo.title}</p>
-              )
+              null
             )}
           </div>
         </div>
