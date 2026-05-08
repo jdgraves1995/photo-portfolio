@@ -13,7 +13,7 @@ interface Album {
 export default function AlbumCard({ album }: { album: Album }) {
   return (
     <Link href={`/albums/${album.slug}`} className="group block">
-      <div className="aspect-[4/3] overflow-hidden bg-rule animate-[fadeIn_0.8s_ease-out_both]">
+      <div className="aspect-[4/3] overflow-hidden bg-rule rounded-xl border border-rule animate-[fadeIn_0.8s_ease-out_both]">
         {album.coverPhotoUrl ? (
           <Image
             src={album.coverPhotoUrl}
