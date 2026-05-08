@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic"
 
 import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
-import Navbar from "@/components/Navbar"
+import SiteMenu from "@/components/SiteMenu"
 import DeletePhotoButton from "@/components/admin/DeletePhotoButton"
 import { notFound } from "next/navigation"
 import Image from "next/image"
@@ -44,8 +44,8 @@ export default async function PhotoPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-canvas text-ink">
-      <Navbar />
-      <main className="max-w-3xl mx-auto px-6 py-10">
+      <SiteMenu />
+      <main className="max-w-3xl mx-auto px-6 py-10 animate-[fadeIn_0.8s_ease-out_both]">
         <Link
           href={photo.album ? `/albums/${photo.album.slug}` : "/"}
           className="text-muted hover:text-ink text-sm mb-8 inline-block transition-colors"

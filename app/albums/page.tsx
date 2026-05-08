@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic"
 
 import { db } from "@/lib/db"
 import AlbumCard from "@/components/AlbumCard"
-import Navbar from "@/components/Navbar"
+import SiteMenu from "@/components/SiteMenu"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -25,9 +25,9 @@ export default async function AlbumsPage() {
 
   return (
     <div className="min-h-screen bg-canvas text-ink">
-      <Navbar />
+      <SiteMenu />
       <main className="max-w-4xl mx-auto px-6 py-16">
-        <h1 className="font-display text-3xl font-normal text-ink mb-12">Albums</h1>
+        <h1 className="font-display text-3xl font-normal text-ink mb-12 animate-[fadeIn_0.8s_ease-out_both]">Albums</h1>
         {albums.length === 0 ? (
           <p className="text-muted">No albums yet.</p>
         ) : (

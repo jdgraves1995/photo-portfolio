@@ -4,7 +4,7 @@ import { db } from "@/lib/db"
 import { auth } from "@/lib/auth"
 import GalleryScroll from "@/components/GalleryScroll"
 import LandingTextEditor from "@/components/LandingTextEditor"
-import Navbar from "@/components/Navbar"
+import SiteMenu from "@/components/SiteMenu"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -21,7 +21,7 @@ export default async function GalleryPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-canvas">
-      <Navbar />
+      <SiteMenu />
 
       {photos.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-40 text-muted gap-2">
