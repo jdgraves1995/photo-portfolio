@@ -45,6 +45,11 @@ body {
   from { opacity: 0; }
 }
 
+::view-transition-old(site-header),
+::view-transition-new(site-header) {
+  animation: none;
+  mix-blend-mode: normal;
+}
 
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),

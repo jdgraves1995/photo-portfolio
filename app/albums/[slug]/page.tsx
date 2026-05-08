@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic"
 
 import { db } from "@/lib/db"
 import GalleryScroll from "@/components/GalleryScroll"
-import SiteMenu from "@/components/SiteMenu"
+import Navbar from "@/components/Navbar"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import type { Metadata } from "next"
@@ -52,8 +52,8 @@ export default async function AlbumPage({ params }: Props) {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-canvas text-ink">
-      <SiteMenu />
-      <div className="max-w-3xl w-full mx-auto px-6 pt-10 pb-4 shrink-0 animate-[fadeIn_0.8s_ease-out_both]">
+      <Navbar />
+      <div className="max-w-3xl w-full mx-auto px-6 pt-10 pb-4 shrink-0">
         <Link href="/albums" className="text-sm text-muted hover:text-ink transition-colors">
           &larr; All albums
         </Link>
