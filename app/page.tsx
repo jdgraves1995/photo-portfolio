@@ -1,7 +1,9 @@
 export const dynamic = "force-dynamic"
 
 import { db } from "@/lib/db"
+import { auth } from "@/lib/auth"
 import Navbar from "@/components/Navbar"
+import HeroPhotoEditor from "@/components/HeroPhotoEditor"
 import Image from "next/image"
 import type { Metadata } from "next"
 
@@ -11,10 +13,15 @@ export const metadata: Metadata = {
 }
 
 export default async function HeroPage() {
-  const [photo, settings] = await Promise.all([
+  const [latestPhoto, settings, session] = await Promise.all([
     db.photo.findFirst({ orderBy: { createdAt: "desc" } }),
     db.siteSettings.findUnique({ where: { id: "default" } }),
+    auth(),
   ])
+
+  const photo = settings?.heroPhotoId
+    ? ((await db.photo.findUnique({ where: { id: settings.heroPhotoId } })) ?? latestPhoto)
+    : latestPhoto
 
   if (!photo) {
     return (
@@ -56,6 +63,8 @@ export default async function HeroPage() {
           </div>
         </div>
       )}
+
+      {!!session && <HeroPhotoEditor currentPhotoId={photo.id} />}
     </div>
   )
 }
