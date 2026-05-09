@@ -81,3 +81,38 @@ See `.env.example`. Required for dev:
 ## Debugging 
 - Before applying a fix, identify the root cause - do not patch symptoms (e.g., toggling flags, adding overrides)
 - If a fix doesn't work on first try, revert it before attempting the next approach
+
+## DevOps & MCP Playbook
+
+### Deploy pipeline
+
+Pushing to `master` triggers two things in parallel:
+- **GitHub Actions** validates: runs `npm run lint` and `tsc --noEmit`. Fails fast.
+- **Vercel** builds and deploys: runs `prisma migrate deploy` then `next build` (configured in `vercel.json`).
+
+Migrations always run before the new app code goes live.
+
+### Migration workflow (local → production)
+
+1. Write migration: `npx prisma migrate dev --name <description>`
+2. Test locally
+3. Push to `master`
+4. Vercel runs `prisma migrate deploy` automatically during build
+
+Never run `prisma migrate deploy` manually against production — let the build command handle it.
+
+### Vercel MCP — when to use
+
+- Check if a push deployed successfully: ask "did my last deploy succeed?"
+- Diagnose a failed build: ask "show me the build logs for the last deployment"
+- Debug a production error: ask "show me recent runtime logs for the photo-portfolio"
+
+### Supabase MCP — when to use
+
+- Inspect data: ask "show me all photos in album X" or "does the SiteSettings row exist?"
+- Verify a migration landed: ask "list the current tables and recent migrations"
+- Quick SQL: use instead of opening Prisma Studio for one-off queries
+
+### Environment variables checklist
+
+Both `DATABASE_URL` and `DIRECT_URL` must be set in Vercel project settings for migrations to work during build. If a deploy fails with a Prisma error, check these first via the Vercel MCP.
