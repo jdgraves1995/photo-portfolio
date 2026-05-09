@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__c0743554-0c2f-408f-9e09-60813cc71884__list_teams",
+      "mcp__c0743554-0c2f-408f-9e09-60813cc71884__list_projects",
+      "mcp__c0743554-0c2f-408f-9e09-60813cc71884__get_project",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git -C \"C:\\\\ClaudeProjects\\\\photo-portfolio\" merge claude/hopeful-panini-5cf375)"
+    ]
+  }
+}
