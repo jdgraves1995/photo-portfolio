@@ -1,10 +1,13 @@
 import Link from "next/link"
+import { auth } from "@/lib/auth"
 
 interface NavbarProps {
   transparent?: boolean
 }
 
-export default function Navbar({ transparent = false }: NavbarProps) {
+export default async function Navbar({ transparent = false }: NavbarProps) {
+  const session = await auth()
+
   if (transparent) {
     return (
       <nav
@@ -22,6 +25,11 @@ export default function Navbar({ transparent = false }: NavbarProps) {
             <Link href="/albums" className="text-sm text-white/80 hover:text-white transition-colors">
               Albums
             </Link>
+            {!!session && (
+              <Link href="/admin" className="text-sm text-white/80 hover:text-white transition-colors">
+                Admin ↗
+              </Link>
+            )}
           </div>
         </div>
       </nav>
@@ -41,6 +49,14 @@ export default function Navbar({ transparent = false }: NavbarProps) {
           <Link href="/albums" className="text-sm text-muted hover:text-ink transition-colors">
             Albums
           </Link>
+          {!!session && (
+            <Link
+              href="/admin"
+              className="text-sm text-navy border border-navy rounded px-2 py-0.5 hover:bg-navy hover:text-white transition-colors"
+            >
+              Admin ↗
+            </Link>
+          )}
         </div>
       </div>
     </nav>
