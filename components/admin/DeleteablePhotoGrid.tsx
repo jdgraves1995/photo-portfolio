@@ -53,7 +53,7 @@ export default function DeleteablePhotoGrid({ photos }: { photos: Photo[] }) {
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); setSelected(null) }}
-                className="w-full px-2 py-1 rounded bg-white/20 text-white text-xs hover:bg-white/30 transition-colors"
+                className="w-full px-2 py-1 rounded bg-white/90 text-ink text-xs hover:bg-white transition-colors"
               >
                 Cancel
               </button>
