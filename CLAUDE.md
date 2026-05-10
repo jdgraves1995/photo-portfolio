@@ -63,12 +63,14 @@ All `/admin` routes are server-side protected via the NextAuth session check in 
 
 | Path | Purpose |
 |---|---|
-| `lib/auth.ts` | NextAuth config (GitHub provider, session callbacks) |
+| `lib/auth.ts` | NextAuth config (GitHub provider, session callbacks); exports `auth` wrapped with React `cache()` to deduplicate per-request DB hits |
 | `lib/db.ts` | Prisma client singleton with PG adapter |
 | `lib/cloudinary.ts` | URL builder helpers for image transformations |
 | `app/actions.ts` | Server actions (e.g., `updateHeroCaption`) |
+| `app/admin/layout.tsx` | Admin panel shell — parchment palette (`bg-parchment`, `text-ink`, sage green accents) |
+| `components/Navbar.tsx` | Public navbar — `async` server component; calls `auth()` internally to conditionally render "Admin ↗" link for authenticated users |
 | `components/PhotoSlideshow.tsx` | Fullscreen gallery with scroll/swipe navigation |
-| `app/globals.css` | Tailwind 4 theme — earthy palette: mist, navy, steel, tan |
+| `app/globals.css` | Tailwind 4 theme — earthy palette tokens including `--color-parchment: #eee9e1` (admin background) |
 
 ### Environment variables
 
@@ -100,6 +102,8 @@ Migrations always run before the new app code goes live.
 4. Vercel runs `prisma migrate deploy` automatically during build
 
 Never run `prisma migrate deploy` manually against production — let the build command handle it.
+
+**Baselining:** If a new environment has a non-empty database with no migration history (P3005 error), run `npx prisma migrate resolve --applied <migration_name>` locally (uses `DIRECT_URL` from `.env`). This records the migration as already applied without touching any tables. The migrations directory is `prisma/migrations/` and was baselined on 2025-05-09 with `20250101000000_init`.
 
 ### Vercel MCP — when to use
 
