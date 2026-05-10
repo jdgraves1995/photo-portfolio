@@ -12,26 +12,26 @@ export default async function AdminLayout({
   if (!session) redirect("/login")
 
   return (
-    <div className="min-h-screen bg-[#3a4d2a] text-white">
-      <nav className="border-b border-white/10 bg-navy">
+    <div className="min-h-screen bg-parchment text-ink">
+      <nav className="border-b border-rule bg-parchment">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <Link href="/" className="text-white font-bold">
-              Portfolio
+            <Link href="/" className="font-display text-lg font-normal tracking-wide text-ink">
+              JG Studio
             </Link>
-            <span className="text-white/30 text-xs">Admin</span>
+            <span className="text-muted text-xs uppercase tracking-wide">Admin</span>
           </div>
           <div className="flex items-center gap-5 text-sm">
-            <Link href="/admin" className="text-white/60 hover:text-white transition-colors">
+            <Link href="/admin" className="text-muted hover:text-ink transition-colors">
               Dashboard
             </Link>
-            <Link href="/admin/upload" className="text-white/60 hover:text-white transition-colors">
+            <Link href="/admin/upload" className="text-muted hover:text-ink transition-colors">
               Upload
             </Link>
-            <Link href="/admin/albums" className="text-white/60 hover:text-white transition-colors">
+            <Link href="/admin/albums" className="text-muted hover:text-ink transition-colors">
               Albums
             </Link>
-            <Link href="/admin/photos" className="text-white/60 hover:text-white transition-colors">
+            <Link href="/admin/photos" className="text-muted hover:text-ink transition-colors">
               Photos
             </Link>
             <SignOutButton />
