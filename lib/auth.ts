@@ -1,9 +1,10 @@
+import { cache } from "react"
 import NextAuth from "next-auth"
 import GitHub from "next-auth/providers/github"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { db } from "./db"
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const { handlers, auth: uncachedAuth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(db),
   providers: [
     GitHub({
@@ -13,3 +14,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   session: { strategy: "database" },
 })
+
+export const auth = cache(uncachedAuth)
