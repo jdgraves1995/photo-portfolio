@@ -64,41 +64,41 @@ export default function AlbumForm({ album }: AlbumFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm text-zinc-400 mb-1">Title</label>
+        <label className="block text-sm text-muted mb-1">Title</label>
         <input
           value={title}
           onChange={(e) => handleTitleChange(e.target.value)}
           required
-          className="w-full bg-zinc-800 border border-zinc-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-500"
+          className="w-full bg-white border border-rule text-ink rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-navy"
           placeholder="My Album"
         />
       </div>
       <div>
-        <label className="block text-sm text-zinc-400 mb-1">Slug (URL path)</label>
+        <label className="block text-sm text-muted mb-1">Slug (URL path)</label>
         <input
           value={slug}
           onChange={(e) => setSlug(e.target.value)}
           required
           pattern="[a-z0-9-]+"
-          className="w-full bg-zinc-800 border border-zinc-700 text-white rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-1 focus:ring-zinc-500"
+          className="w-full bg-white border border-rule text-ink rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-1 focus:ring-navy"
           placeholder="my-album"
         />
       </div>
       <div>
-        <label className="block text-sm text-zinc-400 mb-1">Description</label>
+        <label className="block text-sm text-muted mb-1">Description</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
-          className="w-full bg-zinc-800 border border-zinc-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-500 resize-none"
+          className="w-full bg-white border border-rule text-ink rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-navy resize-none"
           placeholder="Optional description"
         />
       </div>
-      {error && <p className="text-red-400 text-sm">{error}</p>}
+      {error && <p className="text-red-500 text-sm">{error}</p>}
       <button
         type="submit"
         disabled={saving}
-        className="bg-white text-black px-5 py-2 rounded-lg text-sm font-medium hover:bg-zinc-100 disabled:opacity-50 transition-colors"
+        className="bg-navy text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-navy/90 disabled:opacity-50 transition-colors"
       >
         {saving ? "Saving..." : album ? "Update Album" : "Create Album"}
       </button>
