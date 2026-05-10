@@ -45,7 +45,6 @@ export default function UploadDropzone({ albums, existingTags }: { albums: Album
 
   const uploadFile = useCallback(
     async (file: File) => {
-      // 1. Get presigned R2 URL
       const signRes = await fetch("/api/upload/sign", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -54,7 +53,6 @@ export default function UploadDropzone({ albums, existingTags }: { albums: Album
       if (!signRes.ok) throw new Error("Failed to get upload URL")
       const { uploadUrl, key, publicUrl } = await signRes.json()
 
-      // 2. PUT file directly to R2 with progress tracking
       await new Promise<void>((resolve, reject) => {
         const xhr = new XMLHttpRequest()
         xhr.upload.onprogress = (e) => {
@@ -67,10 +65,8 @@ export default function UploadDropzone({ albums, existingTags }: { albums: Album
         xhr.send(file)
       })
 
-      // 3. Get image dimensions for web-displayable formats
       const { width, height } = await getImageDimensions(file)
 
-      // 4. Save metadata to database
       const saveRes = await fetch("/api/upload/complete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -106,11 +102,11 @@ export default function UploadDropzone({ albums, existingTags }: { albums: Album
       <div className="flex flex-wrap gap-6">
         {albums.length > 0 && (
           <div>
-            <label className="block text-sm text-white/50 mb-1">Add to album (optional)</label>
+            <label className="block text-sm text-muted mb-1">Add to album (optional)</label>
             <select
               value={selectedAlbumId}
               onChange={(e) => setSelectedAlbumId(e.target.value)}
-              className="bg-white/10 border border-white/20 text-white rounded-lg px-3 py-2 text-sm w-72 focus:outline-none focus:ring-1 focus:ring-white/30"
+              className="bg-white border border-rule text-ink rounded-lg px-3 py-2 text-sm w-72 focus:outline-none focus:ring-1 focus:ring-navy/40"
             >
               <option value="">No album</option>
               {albums.map((a) => (
@@ -121,7 +117,7 @@ export default function UploadDropzone({ albums, existingTags }: { albums: Album
         )}
 
         <div className="flex-1 min-w-[240px]">
-          <label className="block text-sm text-white/50 mb-1">Tags (optional)</label>
+          <label className="block text-sm text-muted mb-1">Tags (optional)</label>
           <TagInput existingTags={existingTags} selected={selectedTags} onChange={setSelectedTags} />
         </div>
       </div>
@@ -129,14 +125,14 @@ export default function UploadDropzone({ albums, existingTags }: { albums: Album
       <div
         {...getRootProps()}
         className={`border-2 border-dashed rounded-xl p-16 text-center cursor-pointer transition-colors ${
-          isDragActive ? "border-steel bg-steel/5" : "border-white/20 hover:border-white/40"
+          isDragActive ? "border-navy bg-navy/5" : "border-rule hover:border-muted"
         }`}
       >
         <input {...getInputProps()} />
-        <p className="text-white/70 text-lg">
+        <p className="text-ink text-lg">
           {isDragActive ? "Drop files here" : "Drag & drop photos here, or click to browse"}
         </p>
-        <p className="text-white/30 text-sm mt-2">
+        <p className="text-muted text-sm mt-2">
           JPEG · PNG · WebP — export from Lightroom or Photos before uploading
         </p>
       </div>
@@ -144,21 +140,21 @@ export default function UploadDropzone({ albums, existingTags }: { albums: Album
       {uploads.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-white/50">Upload progress</h3>
-            <button onClick={() => setUploads([])} className="text-xs text-white/30 hover:text-white">Clear</button>
+            <h3 className="text-sm font-medium text-muted">Upload progress</h3>
+            <button onClick={() => setUploads([])} className="text-xs text-muted hover:text-ink transition-colors">Clear</button>
           </div>
           <ul className="space-y-3">
             {uploads.map((u, i) => (
-              <li key={i} className="bg-white/5 rounded-lg px-4 py-3 text-sm">
+              <li key={i} className="bg-white border border-rule rounded-lg px-4 py-3 text-sm">
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-white/70 truncate max-w-[70%]">{u.name}</span>
-                  {u.status === "uploading" && <span className="text-white/30 text-xs">{u.progress}%</span>}
-                  {u.status === "done" && <span className="text-steel text-xs">Done</span>}
-                  {u.status === "error" && <span className="text-red-400 text-xs">{u.error ?? "Failed"}</span>}
+                  <span className="text-ink truncate max-w-[70%]">{u.name}</span>
+                  {u.status === "uploading" && <span className="text-muted text-xs">{u.progress}%</span>}
+                  {u.status === "done" && <span className="text-navy text-xs">Done</span>}
+                  {u.status === "error" && <span className="text-red-500 text-xs">{u.error ?? "Failed"}</span>}
                 </div>
                 {u.status === "uploading" && (
-                  <div className="h-1 bg-white/10 rounded-full overflow-hidden">
-                    <div className="h-full bg-steel rounded-full transition-all duration-300" style={{ width: `${u.progress}%` }} />
+                  <div className="h-1 bg-rule rounded-full overflow-hidden">
+                    <div className="h-full bg-navy rounded-full transition-all duration-300" style={{ width: `${u.progress}%` }} />
                   </div>
                 )}
               </li>
