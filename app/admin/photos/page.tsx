@@ -14,7 +14,7 @@ export default async function AdminPhotosPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Photos</h1>
+      <h1 className="font-display text-2xl font-normal mb-6">Photos</h1>
       <PhotoAlbumManager photos={photos} albums={albums} />
     </div>
   )

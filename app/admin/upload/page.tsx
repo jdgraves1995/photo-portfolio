@@ -11,8 +11,8 @@ export default async function UploadPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-2">Upload Photos</h1>
-      <p className="text-zinc-400 text-sm mb-8">
+      <h1 className="font-display text-2xl font-normal mb-2">Upload Photos</h1>
+      <p className="text-muted text-sm mb-8">
         JPEG, PNG, or WebP — export from Lightroom before uploading.
       </p>
       <UploadDropzone albums={albums} existingTags={tags} />
