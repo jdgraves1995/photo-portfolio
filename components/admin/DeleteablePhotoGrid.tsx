@@ -30,7 +30,7 @@ export default function DeleteablePhotoGrid({ photos }: { photos: Photo[] }) {
       {photos.map((photo) => (
         <div
           key={photo.id}
-          className="aspect-square rounded-lg overflow-hidden bg-white/5 relative cursor-pointer"
+          className="aspect-square rounded-lg overflow-hidden bg-rule relative cursor-pointer"
           onClick={() => setSelected(selected === photo.id ? null : photo.id)}
         >
           <Image
