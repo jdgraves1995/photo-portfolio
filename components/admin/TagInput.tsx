@@ -64,17 +64,17 @@ export default function TagInput({ existingTags, selected, onChange }: Props) {
 
   return (
     <div ref={containerRef} className="relative">
-      <div className="flex flex-wrap gap-1.5 bg-white/10 border border-white/20 rounded-lg px-3 py-2 min-h-[38px] focus-within:ring-1 focus-within:ring-white/30">
+      <div className="flex flex-wrap gap-1.5 bg-white border border-rule rounded-lg px-3 py-2 min-h-[38px] focus-within:ring-1 focus-within:ring-navy/40">
         {selected.map((tag) => (
           <span
             key={tag}
-            className="inline-flex items-center gap-1 bg-steel/30 text-white text-xs rounded px-2 py-0.5"
+            className="inline-flex items-center gap-1 bg-navy/10 text-ink text-xs rounded px-2 py-0.5"
           >
             {tag}
             <button
               type="button"
               onClick={() => remove(tag)}
-              className="text-white/50 hover:text-white leading-none"
+              className="text-muted hover:text-ink leading-none"
             >
               ×
             </button>
@@ -87,18 +87,18 @@ export default function TagInput({ existingTags, selected, onChange }: Props) {
           onFocus={() => setOpen(true)}
           onKeyDown={onKeyDown}
           placeholder={selected.length === 0 ? "Type a tag and press Enter" : ""}
-          className="bg-transparent text-white text-sm placeholder:text-white/30 outline-none min-w-[140px] flex-1"
+          className="bg-transparent text-ink text-sm placeholder:text-muted outline-none min-w-[140px] flex-1"
         />
       </div>
 
       {open && (suggestions.length > 0 || (input.trim() && !existingTags.find((t) => t.name.toLowerCase() === input.trim().toLowerCase()))) && (
-        <ul className="absolute z-10 mt-1 w-full bg-zinc-800 border border-white/10 rounded-lg shadow-lg overflow-hidden text-sm">
+        <ul className="absolute z-10 mt-1 w-full bg-white border border-rule rounded-lg shadow-md overflow-hidden text-sm">
           {suggestions.map((t) => (
             <li key={t.id}>
               <button
                 type="button"
                 onMouseDown={(e) => { e.preventDefault(); add(t.name) }}
-                className="w-full text-left px-3 py-2 text-white/80 hover:bg-white/10"
+                className="w-full text-left px-3 py-2 text-ink hover:bg-canvas transition-colors"
               >
                 {t.name}
               </button>
@@ -109,7 +109,7 @@ export default function TagInput({ existingTags, selected, onChange }: Props) {
               <button
                 type="button"
                 onMouseDown={(e) => { e.preventDefault(); add(input) }}
-                className="w-full text-left px-3 py-2 text-white/50 hover:bg-white/10"
+                className="w-full text-left px-3 py-2 text-muted hover:bg-canvas transition-colors"
               >
                 Create &ldquo;{input.trim()}&rdquo;
               </button>
